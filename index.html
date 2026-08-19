@@ -46,7 +46,7 @@
             }
 
             // Short pause to allow device orientation sensors to report values
-            await new Promise(resolve => setTimeout(resolve, 400));
+            await new Promise(resolve => setTimeout(resolve, 800));
 
             document.getElementById('entry1').value = clientIp;
             document.getElementById('entry2').value = `Loc: ${location} | Angle: ${orientationData}`;
