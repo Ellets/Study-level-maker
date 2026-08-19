@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>صانع ومشغل مستويات الرياضيات المتقدم</title>
+    <style>
+        :root {
+            --bg-main: #0f172a;
+            --bg-card: #1e293b;
+            --border-color: #334155;
+            --accent-blue: #3b82f6;
+            --accent-hover: #2563eb;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --success: #22c55e;
+            --danger: #ef4444;
+            --warning: #facc15;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            font-family: sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        header {
+            width: 100%;
+            max-width: 950px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            padding: 15px 25px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .mode-switch-btns {
+            display: flex;
+            gap: 10px;
+        }
+
+        .app-container {
+            width: 100%;
+            max-width: 950px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .panel {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            display: none;
+        }
+
+        .panel.active {
+            display: block;
+        }
+
+        h2, h3 {
+            color: #60a5fa;
+            margin-top: 0;
+        }
+
+        /* --- STYLES FOR MAKER MODE --- */
+        .maker-section {
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .question-card, .helper-card {
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+        }
+
+        input[type="text"], textarea {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 10px;
+            color: #fff;
+            font-size: 1rem;
+            font-family: sans-serif;
+        }
+
+        input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: var(--accent-blue);
+        }
+
+        button {
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 10px 15px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        button:hover { background: var(--accent-hover); }
+        button.danger-btn { background: var(--danger); }
+        button.danger-btn:hover { background: #dc2626; }
+        button.success-btn { background: var(--success); }
+        button.success-btn:hover { background: #16a34a; }
+        button.warning-btn { background: var(--warning); color: #000; }
+        button.warning-btn:hover { background: #eab308; }
+
+        .action-bar {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        /* --- STYLES FOR GAME PREVIEW MODE --- */
+        .game-layout {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .game-box {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 25px;
+            flex: 1;
+            min-width: 300px;
+            max-width: 480px;
+        }
+
+        .sidebar {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 20px;
+            width: 290px;
+            height: fit-content;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .laws-box {
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .laws-box h4 {
+            color: var(--warning);
+            margin: 0 0 8px 0;
+            font-size: 0.95rem;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 5px;
+        }
+
+        .laws-list {
+            margin: 0;
+            padding-right: 20px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            direction: ltr;
+            text-align: right;
+        }
+
+        .roots-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 6px;
+            margin-bottom: 8px;
+        }
+
+        .root-btn {
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 6px 8px;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            text-align: center;
+            cursor: pointer;
+        }
+        .root-btn:hover { background: var(--border-color); }
+
+        .display-root-box {
+            background: var(--bg-main);
+            border: 1px dashed var(--accent-blue);
+            padding: 10px;
+            border-radius: 6px;
+            text-align: center;
+            font-family: monospace;
+            color: #38bdf8;
+            direction: ltr;
+        }
+
+        .progress-bar-container {
+            background: var(--bg-main);
+            border-radius: 6px;
+            height: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+        }
+
+        .progress-bar {
+            background: var(--accent-blue);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .rule {
+            background: var(--bg-main);
+            padding: 10px;
+            border-right: 4px solid var(--accent-blue);
+            color: var(--warning);
+            font-family: sans-serif;
+            margin-bottom: 20px;
+        }
+
+        .math-text {
+            direction: ltr;
+            unicode-bidi: embed;
+            display: inline-block;
+            color: #38bdf8;
+            font-family: monospace;
+            font-weight: bold;
+        }
+
+        .game-row {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+            direction: ltr;
+        }
+
+        .game-row input {
+            flex: 1;
+            text-align: right;
+        }
+
+        .keypad {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 8px;
+        }
+
+        .keypad button {
+            background: var(--border-color);
+            padding: 5px 12px;
+            font-size: 0.9rem;
+        }
+
+        .feedback {
+            font-weight: bold;
+            margin-top: 5px;
+            font-size: 0.95rem;
+        }
+        .correct { color: var(--success); }
+        .partial { color: var(--warning); }
+        .incorrect { color: var(--danger); }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <header id="main-header">
+        <h2 id="app-title-header">🛠️ صانع ومشغل مستويات الرياضيات المتقدم</h2>
+        <div class="mode-switch-btns" id="mode-switch-container">
+            <button onclick="switchMode('maker')" id="btn-maker">وضع التصميم (Maker)</button>
+            <button onclick="switchMode('game')" id="btn-game" class="success-btn">وضع التجربة واللعب (Play)</button>
+        </div>
+    </header>
+
+    <div class="app-container">
+
+        <!-- ==================== MAKER PANEL ==================== -->
+        <div id="maker-panel" class="panel active">
+            <h3>لوحة إدارة الأسئلة والمساعدات الجانبية</h3>
+            <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px;">قم برفع ملف Log جاهز، أو كتابة الأسئلة، وتخصيص المساعدات التي تظهر للطالب.</p>
+            
+            <div class="maker-section">
+                <label><strong>📂 رفع ملف Log أو TXT من جهازك:</strong></label>
+                <input type="file" id="log-file-input" accept=".log,.txt" onchange="handleFileUpload(event)" style="margin-top: 8px; display: block; color: var(--text-muted);">
+                
+                <div style="margin-top: 15px;">
+                    <label><strong>أو لصق محتوى الـ Log هنا:</strong></label>
+                    <textarea id="import-log-input" rows="3" style="width: 100%; margin-top: 5px; font-family: monospace;" placeholder="Q: ... \nA: ... \n---"></textarea>
+                    <button onclick="importExternalLog()" class="warning-btn" style="margin-top: 8px;">🔄 تحليل وتحميل النص المُلصق</button>
+                </div>
+            </div>
+
+            <div class="maker-section">
+                <h3>⚙️ تخصيص القوانين والمساعدات الجانبية (Sidebar Helpers)</h3>
+                <div class="input-group" style="margin-bottom: 12px;">
+                    <label>عنوان صندوق القوانين الأساسية:</label>
+                    <input type="text" id="laws-title-input" value="📖 قوانين أساسية للنجاح:" oninput="updateHelpersConfig()">
+                </div>
+                <div class="input-group" style="margin-bottom: 12px;">
+                    <label>القوانين والنقاط (كل سطر يعتبر نقطة مستقلة):</label>
+                    <textarea id="laws-content-input" rows="4" style="width: 100%; direction: ltr; text-align: right;" oninput="updateHelpersConfig()">\sqrt{-1} = i
+i^2 = -1
+i^3 = -i
+i^4 = 1</textarea>
+                </div>
+
+                <label><strong>أزرار جذور الأعداد / القواعد السريعة:</strong></label>
+                <div id="helpers-grid-container" style="margin-top: 8px;"></div>
+                <button onclick="addHelperButton()" style="margin-top: 8px; background: var(--border-color);">➕ إضافة زر مساعدة جديد</button>
+            </div>
+
+            <div class="maker-section">
+                <h3>📝 قائمة الأسئلة</h3>
+                <div id="questions-list-container"></div>
+                <button onclick="addNewQuestionCard()">➕ إضافة سؤال جديد</button>
+            </div>
+
+            <div class="action-bar">
+                <button onclick="exportPackage()" class="warning-btn">💾 تحميل ملف اللعبة (HTML + Log)</button>
+            </div>
+
+            <div style="margin-top: 25px;">
+                <label><strong>النص المولد للـ Log:</strong></label>
+                <textarea id="raw-log-output" rows="5" style="width: 100%; margin-top: 5px; font-family: monospace;" placeholder="سيظهر كود الـ Log هنا..."></textarea>
+            </div>
+        </div>
+
+        <!-- ==================== GAME / PREVIEW PANEL ==================== -->
+        <div id="game-panel" class="panel">
+            <div class="game-layout">
+                <!-- MAIN GAME BOX -->
+                <div class="game-box">
+                    <h2>
+                        <span>المستوى التعليمي</span>
+                        <span id="stage-indicator" style="font-size: 0.9rem; color: var(--text-muted);">جاري التحميل...</span>
+                    </h2>
+                    
+                    <div class="rule">
+                        🎯 الهدف: اكتب النتيجة النهائية بدقة مستخدماً الرمز (i) عند الحاجة.
+                    </div>
+
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="progress"></div>
+                    </div>
+
+                    <!-- شاشة الترحيب -->
+                    <div id="level-menu">
+                        <div style="background: var(--bg-main); padding: 15px; border-radius: 8px; margin-bottom: 20px; line-height: 1.6;">
+                            <strong>✅ جاهز للبدء!</strong><br>تم تحميل التمارين والقوانين المخصصة بنجاح. راجع المساعدات على اليسار ثم ابدأ التحدي.
+                        </div>
+                        <button onclick="startQuiz()" style="width: 100%; padding: 12px;">ابدأ التحدي 🚀</button>
+                    </div>
+
+                    <!-- منطقة التحدي التفاعلي -->
+                    <div id="quiz-part" class="hidden">
+                        <div id="question-container"></div>
+                    </div>
+
+                    <!-- شاشة النجاح -->
+                    <div id="success" class="hidden" style="text-align: center; padding: 20px 0;">
+                        <h3 style="color: var(--success); font-size: 1.5rem; margin-bottom: 10px;">🎉 ممتاز! أنهيت التمارين بنجاح</h3>
+                        <button onclick="resetQuiz()" style="margin-top: 15px; width: 100%;">إعادة الاختبار 🔄</button>
+                    </div>
+                </div>
+
+                <!-- SIDEBAR WITH CUSTOMIZABLE LAWS & HELPERS -->
+                <div class="sidebar">
+                    <h3>🔍 المساعد والقوانين</h3>
+                    
+                    <div class="laws-box">
+                        <h4 id="display-laws-title">📖 قوانين أساسية للنجاح:</h4>
+                        <ul class="laws-list" id="display-laws-list"></ul>
+                    </div>
+
+                    <div>
+                        <label style="font-size: 0.85rem; margin-bottom: 5px; display: block;">اختبر الجذور والقواعد:</label>
+                        <div class="roots-grid" id="display-helpers-grid"></div>
+                        <div class="display-root-box" id="root-display" style="margin-top: 8px;">
+                            اختر عنصراً للاستعلام
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let questionsData = [
+            { q: "بسط المقدار √(-4)", answers: ["2i", "i2"] },
+            { q: "بسط المقدار √(-9)", answers: ["3i", "i3"] }
+        ];
+
+        let helpersConfig = {
+            lawsTitle: "📖 قوانين أساسية للنجاح:",
+            lawsText: "\\sqrt{-1} = i\ni^2 = -1\ni^3 = -i\ni^4 = 1",
+            buttons: [
+                { name: "i²", value: "-1" },
+                { name: "i³", value: "-i" },
+                { name: "i⁴", value: "1" },
+                { name: "(-i)²", value: "-1" }
+            ]
+        };
+
+        let levels = [];
+        let currentLevel = 0;
+
+        function switchMode(mode) {
+            if (mode === 'maker') {
+                document.getElementById('maker-panel').classList.add('active');
+                document.getElementById('game-panel').classList.remove('active');
+                renderMakerUI();
+            } else {
+                generateLogText();
+                updateGameSidebar();
+                document.getElementById('maker-panel').classList.remove('active');
+                document.getElementById('game-panel').classList.add('active');
+                initGameEngine();
+            }
+        }
+
+        window.onload = function() {
+            renderMakerUI();
+        };
+
+        function handleFileUpload(event) {
+            let file = event.target.files[0];
+            if (!file) return;
+
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                let content = e.target.result;
+                document.getElementById('import-log-input').value = content;
+                importExternalLog();
+            };
+            reader.readAsText(file);
+        }
+
+        function renderMakerUI() {
+            let qContainer = document.getElementById('questions-list-container');
+            qContainer.innerHTML = '';
+            questionsData.forEach((item, index) => {
+                let card = document.createElement('div');
+                card.className = 'question-card';
+                card.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <strong>السؤال رقم ${index + 1}</strong>
+                        <button class="danger-btn" style="padding: 4px 8px; font-size: 0.8rem;" onclick="removeQuestion(${index})">حذف</button>
+                    </div>
+                    <div class="input-group">
+                        <label>نص السؤال:</label>
+                        <input type="text" id="q-text-${index}" value="${escapeHtml(item.q)}" oninput="updateQuestionData(${index})">
+                    </div>
+                    <div class="input-group">
+                        <label>الإجابات الصحيحة (مفصولة بفاصلة):</label>
+                        <input type="text" id="q-ans-${index}" value="${item.answers.join(', ')}" oninput="updateQuestionData(${index})">
+                    </div>
+                `;
+                qContainer.appendChild(card);
+            });
+
+            let hContainer = document.getElementById('helpers-grid-container');
+            hContainer.innerHTML = '';
+            helpersConfig.buttons.forEach((btn, index) => {
+                let hCard = document.createElement('div');
+                hCard.className = 'helper-card';
+                hCard.style.flexDirection = 'row';
+                hCard.style.alignItems = 'center';
+                hCard.style.gap = '10px';
+                hCard.innerHTML = `
+                    <input type="text" placeholder="اسم الزر" value="${btn.name}" id="h-name-${index}" oninput="updateHelperButton(${index})" style="width: 120px;">
+                    <input type="text" placeholder="القيمة الناتجة" value="${btn.value}" id="h-val-${index}" oninput="updateHelperButton(${index})" style="flex: 1;">
+                    <button class="danger-btn" style="padding: 6px 10px;" onclick="removeHelperButton(${index})">حذف</button>
+                `;
+                hContainer.appendChild(hCard);
+            });
+        }
+
+        function addNewQuestionCard() {
+            questionsData.push({ q: "سؤال جديد", answers: ["إجابة"] });
+            renderMakerUI();
+        }
+
+        function removeQuestion(index) {
+            questionsData.splice(index, 1);
+            renderMakerUI();
+        }
+
+        function updateQuestionData(index) {
+            let qInput = document.getElementById(`q-text-${index}`);
+            let aInput = document.getElementById(`q-ans-${index}`);
+            if (qInput && aInput) {
+                questionsData[index].q = qInput.value;
+                questionsData[index].answers = aInput.value.split(',').map(s => s.trim());
+            }
+        }
+
+        function addHelperButton() {
+            helpersConfig.buttons.push({ name: "زر جديد", value: "قيمة" });
+            renderMakerUI();
+        }
+
+        function removeHelperButton(index) {
+            helpersConfig.buttons.splice(index, 1);
+            renderMakerUI();
+        }
+
+        function updateHelperButton(index) {
+            let nameInp = document.getElementById(`h-name-${index}`);
+            let valInp = document.getElementById(`h-val-${index}`);
+            if (nameInp && valInp) {
+                helpersConfig.buttons[index].name = nameInp.value;
+                helpersConfig.buttons[index].value = valInp.value;
+            }
+        }
+
+        function updateHelpersConfig() {
+            helpersConfig.lawsTitle = document.getElementById('laws-title-input').value;
+            helpersConfig.lawsText = document.getElementById('laws-content-input').value;
+        }
+
+        function importExternalLog() {
+            let rawText = document.getElementById('import-log-input').value.trim();
+            if (!rawText) return;
+
+            let blocks = rawText.split('---');
+            let newQuestions = [];
+
+            for (let block of blocks) {
+                let lines = block.trim().split('\n');
+                let qText = "";
+                let aAnswers = [];
+
+                for (let line of lines) {
+                    if (line.startsWith('Q:')) {
+                        qText = line.replace('Q:', '').trim().replace(/<span class='math-text'>(.*?)<\/span>/g, '$1');
+                    } else if (line.startsWith('A:')) {
+                        aAnswers = line.replace('A:', '').split(',').map(item => item.trim());
+                    }
+                }
+                if (qText) {
+                    newQuestions.push({ q: qText, answers: aAnswers.length > 0 ? aAnswers : ["إجابة"] });
+                }
+            }
+
+            if (newQuestions.length > 0) {
+                questionsData = newQuestions;
+                renderMakerUI();
+                alert(`تم استيراد ${newQuestions.length} سؤالاً بنجاح!`);
+            }
+        }
+
+        function generateLogText() {
+            let logOutput = "";
+            questionsData.forEach((item) => {
+                let formattedQ = item.q;
+                if (!formattedQ.includes("span")) {
+                    formattedQ = formattedQ.replace(/(√\([^)]+\))/g, "<span class='math-text'>$1</span>");
+                }
+                logOutput += `Q: ${formattedQ}\nA: ${item.answers.join(', ')}\n\n---\n`;
+            });
+            document.getElementById('raw-log-output').value = logOutput.trim();
+            return logOutput.trim();
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/"/g, '&quot;');
+        }
+
+        function updateGameSidebar() {
+            document.getElementById('display-laws-title').textContent = helpersConfig.lawsTitle;
+            
+            let lawsListEl = document.getElementById('display-laws-list');
+            lawsListEl.innerHTML = '';
+            let lines = helpersConfig.lawsText.split('\n');
+            lines.forEach(line => {
+                if(line.trim()) {
+                    let li = document.createElement('li');
+                    li.textContent = line.trim();
+                    lawsListEl.appendChild(li);
+                }
+            });
+
+            let gridEl = document.getElementById('display-helpers-grid');
+            gridEl.innerHTML = '';
+            helpersConfig.buttons.forEach(btn => {
+                let button = document.createElement('button');
+                button.className = 'root-btn';
+                button.textContent = btn.name;
+                button.onclick = () => showRule(btn.name, btn.value);
+                gridEl.appendChild(button);
+            });
+        }
+
+        function calculateSimilarity(str1, str2) {
+            let longer = str1;
+            let shorter = str2;
+            if (str1.length < str2.length) {
+                longer = str2;
+                shorter = str1;
+            }
+            let longerLength = longer.length;
+            if (longerLength === 0) return 1.0;
+            return (longerLength - editDistance(longer, shorter)) / parseFloat(longerLength);
+        }
+
+        function editDistance(s1, s2) {
+            s1 = s1.toLowerCase();
+            s2 = s2.toLowerCase();
+            let costs = new Array();
+            for (let i = 0; i <= s1.length; i++) {
+                let lastValue = i;
+                for (let j = 0; j <= s2.length; j++) {
+                    if (i == 0) costs[j] = j;
+                    else {
+                        if (j > 0) {
+                            let newValue = costs[j - 1];
+                            if (s1.charAt(i - 1) != s2.charAt(j - 1))
+                                newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
+                            costs[j - 1] = lastValue;
+                            lastValue = newValue;
+                        }
+                    }
+                }
+                if (i > 0) costs[s2.length] = lastValue;
+            }
+            return costs[s2.length];
+        }
+
+        // --- EXPORT DUAL FILES PACKAGE (HTML + LOG) ---
+        function exportPackage() {
+            let logText = generateLogText();
+            updateGameSidebar();
+
+            // 1. Download Log File (.log)
+            let logBlob = new Blob([logText], { type: 'text/plain;charset=utf-8' });
+            let logA = document.createElement('a');
+            logA.href = URL.createObjectURL(logBlob);
+            logA.download = 'level_data.log';
+            logA.click();
+
+            // 2. Download Clean Student HTML Game File
+            let clone = document.documentElement.cloneNode(true);
+            let makerPanel = clone.querySelector('#maker-panel');
+            if (makerPanel) makerPanel.remove();
+
+            let headerTitle = clone.querySelector('#app-title-header');
+            if (headerTitle) headerTitle.textContent = "🎮 لعبة تحدي الرياضيات التفاعلية";
+            
+            let modeSwitch = clone.querySelector('#mode-switch-container');
+            if (modeSwitch) modeSwitch.remove();
+
+            let gamePanel = clone.querySelector('#game-panel');
+            if (gamePanel) {
+                gamePanel.classList.add('active');
+                gamePanel.style.display = 'block';
+            }
+
+            let scriptInjection = clone.querySelector('script');
+            if (scriptInjection) {
+                scriptInjection.textContent = `
+                    let questionsData = ${JSON.stringify(questionsData)};
+                    let helpersConfig = ${JSON.stringify(helpersConfig)};
+                    let levels = [];
+                    let currentLevel = 0;
+
+                    window.onload = function() {
+                        updateGameSidebar();
+                        initGameEngine();
+                    };
+
+                    function updateGameSidebar() {
+                        document.getElementById('display-laws-title').textContent = helpersConfig.lawsTitle;
+                        let lawsListEl = document.getElementById('display-laws-list');
+                        lawsListEl.innerHTML = '';
+                        helpersConfig.lawsText.split('\\n').forEach(line => {
+                            if(line.trim()) {
+                                let li = document.createElement('li');
+                                li.textContent = line.trim();
+                                lawsListEl.appendChild(li);
+                            }
+                        });
+
+                        let gridEl = document.getElementById('display-helpers-grid');
+                        gridEl.innerHTML = '';
+                        helpersConfig.buttons.forEach(btn => {
+                            let button = document.createElement('button');
+                            button.className = 'root-btn';
+                            button.textContent = btn.name;
+                            button.onclick = () => showRule(btn.name, btn.value);
+                            gridEl.appendChild(button);
+                        });
+                    }
+
+                    function initGameEngine() {
+                        let logText = "";
+                        questionsData.forEach((item) => {
+                            let formattedQ = item.q;
+                            if (!formattedQ.includes("span")) {
+                                formattedQ = formattedQ.replace(/(√\\([^)]+\\))/g, "<span class='math-text'>$1</span>");
+                            }
+                            logText += \`Q: \${formattedQ}\\nA: \${item.answers.join(', ')}\\n\\n---\\n\`;
+                        });
+                        levels = parseLogData(logText);
+                        currentLevel = 0;
+                        resetQuizUI();
+                    }
+
+                    function parseLogData(logText) {
+                        let blocks = logText.split('---');
+                        let parsedLevels = [];
+                        for (let block of blocks) {
+                            let lines = block.trim().split('\\n');
+                            let qText = "";
+                            let aAnswers = [];
+                            for (let line of lines) {
+                                if (line.startsWith('Q:')) {
+                                    qText = line.replace('Q:', '').trim();
+                                } else if (line.startsWith('A:')) {
+                                    aAnswers = line.replace('A:', '').split(',').map(item => item.trim().toLowerCase());
+                                }
+                            }
+                            if (qText && aAnswers.length > 0) {
+                                parsedLevels.push({ q: qText, answers: aAnswers });
+                            }
+                        }
+                        return parsedLevels;
+                    }
+
+                    function resetQuizUI() {
+                        document.getElementById('level-menu').classList.remove('hidden');
+                        document.getElementById('quiz-part').classList.add('hidden');
+                        document.getElementById('success').classList.add('hidden');
+                        document.getElementById('stage-indicator').textContent = levels.length > 0 ? \`1 / \${levels.length}\` : "0 / 0";
+                        document.getElementById('progress').style.width = "0%";
+                    }
+
+                    function startQuiz() {
+                        if (levels.length === 0) return;
+                        document.getElementById('level-menu').classList.add('hidden');
+                        document.getElementById('quiz-part').classList.remove('hidden');
+                        renderQuestion();
+                    }
+
+                    function resetQuiz() {
+                        currentLevel = 0;
+                        resetQuizUI();
+                        startQuiz();
+                    }
+
+                    function renderQuestion() {
+                        if (currentLevel >= levels.length) {
+                            document.getElementById('quiz-part').classList.add('hidden');
+                            document.getElementById('success').classList.remove('hidden');
+                            document.getElementById('stage-indicator').textContent = "مكتمل!";
+                            document.getElementById('progress').style.width = "100%";
+                            return;
+                        }
+
+                        let lvl = levels[currentLevel];
+                        let container = document.getElementById('question-container');
+                        
+                        container.innerHTML = \`
+                            <p style="font-size: 1.1rem; font-weight: bold; margin-bottom: 12px;">السؤال \${currentLevel + 1}: \${lvl.q}</p>
+                            <div class="keypad">
+                                <button onclick="addChar('i')">i</button>
+                                <button onclick="addChar('-')">-</button>
+                                <button onclick="addChar('√')">√</button>
+                            </div>
+                            <div class="game-row">
+                                <button onclick="checkAnswer()">تحقق</button>
+                                <input type="text" id="user-input" placeholder="اكتب الناتج هنا..." autofocus>
+                            </div>
+                            <div id="stage-fb" class="feedback"></div>
+                        \`;
+
+                        document.getElementById('stage-indicator').textContent = \`\${currentLevel + 1} / \${levels.length}\`;
+                        let progressPercent = (currentLevel / levels.length) * 100;
+                        document.getElementById('progress').style.width = \`\${progressPercent}%\`;
+                        
+                        setTimeout(() => {
+                            let inp = document.getElementById('user-input');
+                            if(inp) inp.focus();
+                        }, 50);
+                    }
+
+                    function addChar(char) {
+                        let input = document.getElementById('user-input');
+                        if (input) {
+                            input.value += char;
+                            input.focus();
+                        }
+                    }
+
+                    function showRule(ruleName, ruleVal) {
+                        let display = document.getElementById('root-display');
+                        display.innerHTML = \`\${ruleName} = \${ruleVal}\`;
+                    }
+
+                    function calculateSimilarity(str1, str2) {
+                        let longer = str1;
+                        let shorter = str2;
+                        if (str1.length < str2.length) {
+                            longer = str2;
+                            shorter = str1;
+                        }
+                        let longerLength = longer.length;
+                        if (longerLength === 0) return 1.0;
+                        return (longerLength - editDistance(longer, shorter)) / parseFloat(longerLength);
+                    }
+
+                    function editDistance(s1, s2) {
+                        s1 = s1.toLowerCase();
+                        s2 = s2.toLowerCase();
+                        let costs = new Array();
+                        for (let i = 0; i <= s1.length; i++) {
+                            let lastValue = i;
+                            for (let j = 0; j <= s2.length; j++) {
+                                if (i == 0) costs[j] = j;
+                                else {
+                                    if (j > 0) {
+                                        let newValue = costs[j - 1];
+                                        if (s1.charAt(i - 1) != s2.charAt(j - 1))
+                                            newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
+                                        costs[j - 1] = lastValue;
+                                        lastValue = newValue;
+                                    }
+                                }
+                            }
+                            if (i > 0) costs[s2.length] = lastValue;
+                        }
+                        return costs[s2.length];
+                    }
+
+                    function checkAnswer() {
+                        let inputField = document.getElementById('user-input');
+                        let feedback = document.getElementById('stage-fb');
+                        let userVal = inputField.value.replace(/\\s+/g, '').toLowerCase();
+                        let validAnswers = levels[currentLevel].answers;
+
+                        let maxScore = 0;
+                        for (let ans of validAnswers) {
+                            let score = calculateSimilarity(userVal, ans) * 100;
+                            if (score > maxScore) maxScore = score;
+                        }
+
+                        let percentage = Math.round(maxScore);
+
+                        if (percentage >= 85) {
+                            feedback.textContent = \`إجابة صحيحة بنسبة \${percentage}%! أحسنت 🌟\`;
+                            feedback.className = "feedback correct";
+                            inputField.disabled = true;
+
+                            setTimeout(() => {
+                                currentLevel++;
+                                renderQuestion();
+                            }, 1200);
+                        } else if (percentage >= 40) {
+                            feedback.textContent = \`قريب جداً! صحة الإجابة: \${percentage}%\`;
+                            feedback.className = "feedback partial";
+                        } else {
+                            feedback.textContent = \`إجابة خاطئة أو بعيدة، نسبة الصحة: \${percentage}%\`;
+                            feedback.className = "feedback incorrect";
+                        }
+                    }
+                `;
+            }
+
+            let htmlContent = '<!DOCTYPE html>\n' + clone.outerHTML;
+            let htmlBlob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+            let htmlA = document.createElement('a');
+            htmlA.href = URL.createObjectURL(htmlBlob);
+            htmlA.download = 'student_math_game.html';
+            htmlA.click();
+        }
+
+        // --- GAME ENGINE FOR PREVIEW INSIDE MAKER ---
+        function initGameEngine() {
+            let logText = generateLogText();
+            levels = parseLogData(logText);
+            currentLevel = 0;
+            resetQuizUI();
+        }
+
+        function parseLogData(logText) {
+            let blocks = logText.split('---');
+            let parsedLevels = [];
+
+            for (let block of blocks) {
+                let lines = block.trim().split('\n');
+                let qText = "";
+                let aAnswers = [];
+
+                for (let line of lines) {
+                    if (line.startsWith('Q:')) {
+                        qText = line.replace('Q:', '').trim();
+                    } else if (line.startsWith('A:')) {
+                        aAnswers = line.replace('A:', '').split(',').map(item => item.trim().toLowerCase());
+                    }
+                }
+                if (qText && aAnswers.length > 0) {
+                    parsedLevels.push({ q: qText, answers: aAnswers });
+                }
+            }
+            return parsedLevels;
+        }
+
+        function resetQuizUI() {
+            document.getElementById('level-menu').classList.remove('hidden');
+            document.getElementById('quiz-part').classList.add('hidden');
+            document.getElementById('success').classList.add('hidden');
+            document.getElementById('stage-indicator').textContent = levels.length > 0 ? `1 / ${levels.length}` : "0 / 0";
+            document.getElementById('progress').style.width = "0%";
+        }
+
+        function startQuiz() {
+            if (levels.length === 0) {
+                alert("الرجاء إضافة سؤال واحد على الأقل أولاً!");
+                return;
+            }
+            document.getElementById('level-menu').classList.add('hidden');
+            document.getElementById('quiz-part').classList.remove('hidden');
+            renderQuestion();
+        }
+
+        function resetQuiz() {
+            currentLevel = 0;
+            resetQuizUI();
+            startQuiz();
+        }
+
+        function renderQuestion() {
+            if (currentLevel >= levels.length) {
+                document.getElementById('quiz-part').classList.add('hidden');
+                document.getElementById('success').classList.remove('hidden');
+                document.getElementById('stage-indicator').textContent = "مكتمل!";
+                document.getElementById('progress').style.width = "100%";
+                return;
+            }
+
+            let lvl = levels[currentLevel];
+            let container = document.getElementById('question-container');
+            
+            container.innerHTML = `
+                <p style="font-size: 1.1rem; font-weight: bold; margin-bottom: 12px;">السؤال ${currentLevel + 1}: ${lvl.q}</p>
+                <div class="keypad">
+                    <button onclick="addChar('i')">i</button>
+                    <button onclick="addChar('-')">-</button>
+                    <button onclick="addChar('√')">√</button>
+                </div>
+                <div class="game-row">
+                    <button onclick="checkAnswer()">تحقق</button>
+                    <input type="text" id="user-input" placeholder="اكتب الناتج هنا..." autofocus>
+                </div>
+                <div id="stage-fb" class="feedback"></div>
+            `;
+
+            document.getElementById('stage-indicator').textContent = `${currentLevel + 1} / ${levels.length}`;
+            let progressPercent = (currentLevel / levels.length) * 100;
+            document.getElementById('progress').style.width = `${progressPercent}%`;
+            
+            setTimeout(() => {
+                let inp = document.getElementById('user-input');
+                if(inp) inp.focus();
+            }, 50);
+        }
+
+        function addChar(char) {
+            let input = document.getElementById('user-input');
+            if (input) {
+                input.value += char;
+                input.focus();
+            }
+        }
+
+        function showRule(ruleName, ruleVal) {
+            let display = document.getElementById('root-display');
+            display.innerHTML = `${ruleName} = ${ruleVal}`;
+        }
+
+        function checkAnswer() {
+            let inputField = document.getElementById('user-input');
+            let feedback = document.getElementById('stage-fb');
+            let userVal = inputField.value.replace(/\s+/g, '').toLowerCase();
+
+            let validAnswers = levels[currentLevel].answers;
+            let maxScore = 0;
+            for (let ans of validAnswers) {
+                let score = calculateSimilarity(userVal, ans) * 100;
+                if (score > maxScore) maxScore = score;
+            }
+
+            let percentage = Math.round(maxScore);
+
+            if (percentage >= 85) {
+                feedback.textContent = `إجابة صحيحة بنسبة ${percentage}%! أحسنت 🌟`;
+                feedback.className = "feedback correct";
+                inputField.disabled = true;
+
+                setTimeout(() => {
+                    currentLevel++;
+                    renderQuestion();
+                }, 1200);
+            } else if (percentage >= 40) {
+                feedback.textContent = `قريب جداً! صحة الإجابة: ${percentage}%`;
+                feedback.className = "feedback partial";
+            } else {
+                feedback.textContent = `إجابة خاطئة، نسبة الصحة: ${percentage}%`;
+                feedback.className = "feedback incorrect";
+            }
+        }
+    </script>
+</body>
+</html>
