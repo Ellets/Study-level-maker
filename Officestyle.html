@@ -1,0 +1,1045 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title-tag">منصة المعلم الذكية - بيئة عمل مكاتب مايكروسوفت</title>
+    <style>
+        :root {
+            --office-bg: #f3f2f1;
+            --office-white: #ffffff;
+            --office-border: #c8c6c4;
+            --office-dark: #323130;
+            --office-muted: #605e5c;
+            --office-blue: #0078d4;
+            --office-blue-hover: #106ebe;
+            --office-tab-hover: #edebe9;
+            --success: #107c41;
+            --danger: #a80000;
+            --warning: #d83b01;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--office-bg);
+            color: var(--office-dark);
+            font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* --- OFFICE SUITE APP FRAME --- */
+        .app-window {
+            width: 100%;
+            max-width: 1050px;
+            background: var(--office-white);
+            border: 1px solid var(--office-border);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+        }
+
+        /* --- TITLE BAR --- */
+        .title-bar {
+            background: #fbfbfa;
+            border-bottom: 1px solid var(--office-border);
+            padding: 8px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .title-bar h1 {
+            font-size: 0.9rem;
+            margin: 0;
+            font-weight: 600;
+            color: var(--office-dark);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* --- RIBBON TAB BAR --- */
+        .ribbon-tabs {
+            display: flex;
+            background: #f3f2f1;
+            border-bottom: 1px solid var(--office-border);
+            padding: 0 8px;
+            gap: 2px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--office-muted);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.1s;
+        }
+
+        .tab-btn:hover {
+            background: var(--office-tab-hover);
+            color: var(--office-dark);
+        }
+
+        .tab-btn.active {
+            background: var(--office-white);
+            color: var(--office-blue);
+            border-bottom-color: var(--office-blue);
+            border-top: 1px solid var(--office-border);
+            border-left: 1px solid var(--office-border);
+            border-right: 1px solid var(--office-border);
+        }
+
+        /* --- RIBBON CONTENT PANES --- */
+        .ribbon-content-area {
+            padding: 20px;
+            min-height: 480px;
+            background: var(--office-white);
+        }
+
+        .tab-pane {
+            display: none;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        h3 {
+            color: var(--office-blue);
+            margin-top: 0;
+            font-size: 1rem;
+            border-bottom: 1px solid var(--office-border);
+            padding-bottom: 6px;
+            font-weight: 600;
+        }
+
+        /* --- FORM CONTROLS & ELEMENTS --- */
+        .office-card {
+            background: #faf9f8;
+            border: 1px solid var(--office-border);
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-bottom: 10px;
+        }
+
+        label {
+            font-size: 0.8rem;
+            color: var(--office-muted);
+            font-weight: 600;
+        }
+
+        input[type="text"], textarea {
+            background: #ffffff;
+            border: 1px solid var(--office-border);
+            border-radius: 0px;
+            padding: 6px 10px;
+            color: var(--office-dark);
+            font-size: 0.85rem;
+            font-family: inherit;
+            width: 100%;
+        }
+
+        input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: var(--office-blue);
+            box-shadow: 0 0 0 1px var(--office-blue);
+        }
+
+        button {
+            background: #f3f2f1;
+            color: var(--office-dark);
+            border: 1px solid var(--office-border);
+            border-radius: 0px;
+            padding: 6px 14px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            min-height: 32px;
+            font-family: inherit;
+        }
+
+        button:hover { background: var(--office-tab-hover); border-color: #8a8886; }
+        button:active { background: #c7e0f4; }
+
+        button.primary-btn { background: var(--office-blue); color: white; border-color: #005a9e; }
+        button.primary-btn:hover { background: var(--office-blue-hover); }
+
+        button.success-btn { background: var(--success); color: white; border-color: #0b5329; }
+        button.success-btn:hover { background: #0b6a38; }
+
+        button.danger-btn { background: #fdf3f2; color: var(--danger); border-color: #f1707b; }
+        button.danger-btn:hover { background: #fde7e9; }
+
+        button.warning-btn { background: #fff4ce; color: #323130; border-color: #ffaa44; }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        /* --- STUDENT PREVIEW / GAME PANEL LAYOUT --- */
+        .student-workspace {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .workspace-main, .workspace-sidebar {
+            background: #faf9f8;
+            border: 1px solid var(--office-border);
+            padding: 16px;
+        }
+
+        .laws-box {
+            background: #ffffff;
+            border: 1px solid var(--office-border);
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .laws-box h4 {
+            color: var(--warning);
+            margin: 0 0 4px 0;
+            font-size: 0.85rem;
+            border-bottom: 1px solid var(--office-border);
+            padding-bottom: 4px;
+        }
+
+        .laws-list {
+            margin: 0;
+            padding-right: 16px;
+            font-size: 0.8rem;
+            color: var(--office-muted);
+            line-height: 1.4;
+            text-align: right;
+        }
+
+        .roots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 4px;
+            margin-bottom: 6px;
+        }
+
+        .root-btn {
+            background: #ffffff;
+            border: 1px solid var(--office-border);
+            color: var(--office-dark);
+            padding: 6px;
+            font-size: 0.8rem;
+            text-align: center;
+            cursor: pointer;
+        }
+        .root-btn:hover { border-color: var(--office-blue); background: var(--office-tab-hover); }
+
+        .display-root-box {
+            background: #eff6fc;
+            border: 1px solid #c7e0f4;
+            padding: 8px;
+            text-align: right;
+            color: #003366;
+            font-size: 0.8rem;
+            min-height: 32px;
+        }
+
+        .progress-bar-container {
+            background: #ffffff;
+            height: 6px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            border: 1px solid var(--office-border);
+        }
+
+        .progress-bar {
+            background: var(--office-blue);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .rule {
+            background: #eff6fc;
+            padding: 8px 12px;
+            border-right: 3px solid var(--office-blue);
+            color: #003366;
+            font-size: 0.8rem;
+            margin-bottom: 12px;
+        }
+
+        .game-row {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .feedback {
+            font-weight: 600;
+            margin-top: 4px;
+            font-size: 0.85rem;
+        }
+        .correct { color: var(--success); }
+        .partial { color: var(--warning); }
+        .incorrect { color: var(--danger); }
+        .hidden { display: none; }
+
+        @media (min-width: 768px) {
+            .student-workspace { flex-direction: row; }
+            .workspace-main { flex: 1; }
+            .workspace-sidebar { width: 300px; }
+            .game-row { flex-direction: row; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-window">
+        <!-- Office Title Bar -->
+        <div class="title-bar">
+            <h1 id="header-display-title">📁 منصة المعلم الذكية — نظام إدارة الاختبارات التفاعلية</h1>
+            <div>
+                <button onclick="exportPackage()" class="success-btn">💾 تصدير الحزمة التفاعلية للطلاب (.html)</button>
+            </div>
+        </div>
+
+        <!-- Ribbon Tab Bar -->
+        <div class="ribbon-tabs">
+            <button class="tab-btn active" onclick="switchTab('tab-home', this)">🏠 الرئيسية والاستيراد</button>
+            <button class="tab-btn" onclick="switchTab('tab-questions', this)">📝 بنك الأسئلة (<span id="q-count-badge">2</span>)</button>
+            <button class="tab-btn" onclick="switchTab('tab-guidelines', this)">📌 الإرشادات والمساعدات</button>
+            <button class="tab-btn" onclick="switchTab('tab-preview', this)" style="color: var(--office-blue);">🚀 معاينة طالب</button>
+        </div>
+
+        <!-- Ribbon Content Panes -->
+        <div class="ribbon-content-area">
+
+            <!-- TAB 1: HOME & IMPORT -->
+            <div id="tab-home" class="tab-pane active">
+                <h3>إدارة البيانات العامة وتسمية الملف</h3>
+                <p style="color: var(--office-muted); font-size: 0.85rem; margin-bottom: 16px;">قم بتحديد عنوان وتسمية المادة أو المستوى الدراسي، واستخدم خيارات الاستيراد السريع أدناه.</p>
+
+                <div class="office-card">
+                    <div style="font-weight: 600; font-size: 0.9rem; margin-bottom: 8px;">🏷️ تسمية وتخصيص عنوان الوحدة أو الفصل</div>
+                    <div class="input-group">
+                        <label>اسم الملف/الوحدة (مثال: رياضيات الفصل الأول - المستوى الأول):</label>
+                        <input type="text" id="project-filename-input" value="رياضيات الفصل الأول - المستوى الأول" oninput="updateProjectTitle(this.value)">
+                    </div>
+                </div>
+
+                <div class="office-card">
+                    <div style="font-weight: 600; font-size: 0.9rem; margin-bottom: 8px;">📥 استيراد بيانات سريعة (ملف أو لصق نصي)</div>
+                    <div class="grid-2">
+                        <div class="input-group">
+                            <label>رفع ملف نصي جاهز (.txt / .log):</label>
+                            <input type="file" id="log-file-input" accept=".log,.txt" onchange="handleFileUpload(event)">
+                        </div>
+                        <div class="input-group">
+                            <label>استيراد قالب جاهز سريع:</label>
+                            <button onclick="loadDefaultTemplate()" class="warning-btn">تحميل القالب الافتراضي</button>
+                        </div>
+                    </div>
+                    <div class="input-group" style="margin-top: 10px;">
+                        <label>أو لصق بنك الأسئلة النصي هنا:</label>
+                        <textarea id="import-log-input" rows="4" placeholder="Q: اكتب السؤال هنا...&#10;A: الإجابة المقبولة&#10;H: تلميح للطالب&#10;---" style="font-family: monospace;"></textarea>
+                        <button onclick="importExternalLog()" class="primary-btn" style="margin-top: 6px;">تحليل وتوزيع النصوص على التبويبات</button>
+                    </div>
+                </div>
+
+                <div class="office-card">
+                    <div style="font-weight: 600; font-size: 0.9rem; margin-bottom: 6px;">📊 ملخص الحالة الحالية</div>
+                    <div style="font-size: 0.85rem; color: var(--office-muted); line-height: 1.6;">
+                        • العنوان الحالي: <strong id="summary-title-display">رياضيات الفصل الأول - المستوى الأول</strong><br>
+                        • عدد الأسئلة الحالية في النظام: <strong id="summary-q-count">2</strong> أسئلة.<br>
+                        • عدد مفاتيح المساعدة الإرشادية: <strong id="summary-h-count">1</strong> مفاتيح نشطة.<br>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: QUESTION BANK -->
+            <div id="tab-questions" class="tab-pane">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h3 style="margin: 0; border: none;">إدارة بنك الأسئلة والتقييم الآلي</h3>
+                    <button onclick="addNewQuestionCard()" class="primary-btn">+ إضافة صف سؤال جديد</button>
+                </div>
+                <p style="color: var(--office-muted); font-size: 0.85rem; margin-bottom: 16px;">كل سؤال يحتوي على نص السؤال، الإجابات الصحيحة المقبولة (فصل عدة إجابات بفاصلة)، وتلميح مساعد.</p>
+
+                <div id="questions-list-container"></div>
+            </div>
+
+            <!-- TAB 3: GUIDELINES & SIDEBAR -->
+            <div id="tab-guidelines" class="tab-pane">
+                <h3>تخصيص اللائحة الإرشادية والمفاتيح الجانبية</h3>
+                <p style="color: var(--office-muted); font-size: 0.85rem; margin-bottom: 16px;">تحكم في التعليمات والمراجع الثابتة التي تظهر لطلابك طوال فترة الاختبار.</p>
+
+                <div class="office-card">
+                    <div class="input-group">
+                        <label>عنوان صندوق التوجيهات:</label>
+                        <input type="text" id="laws-title-input" value="📌 توجيهات هامة للاستذكار:" oninput="updateHelpersConfig()">
+                    </div>
+                    <div class="input-group">
+                        <label>النقاط الإرشادية (كل سطر عبارة عن نقطة مستقلة):</label>
+                        <textarea id="laws-content-input" rows="3" oninput="updateHelpersConfig()">اقرأ السؤال بتمعن قبل الإجابة.
+استعن بمفاتيح المساعدة الجانبية عند الحاجة.</textarea>
+                    </div>
+                </div>
+
+                <div class="office-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <label style="font-size: 0.9rem;">أزرار ومفاتيح المساعدة السريعة:</label>
+                        <button onclick="addHelperButton()" class="primary-btn" style="padding: 2px 10px; font-size: 0.8rem;">+ إضافة زر جديد</button>
+                    </div>
+                    <div id="helpers-grid-container"></div>
+                </div>
+            </div>
+
+            <!-- TAB 4: STUDENT PREVIEW -->
+            <div id="tab-preview" class="tab-pane">
+                <h3 style="color: var(--success);" id="preview-subject-header">معاينة تجربة الطالب: رياضيات الفصل الأول - المستوى الأول</h3>
+                <p style="color: var(--office-muted); font-size: 0.85rem; margin-bottom: 16px;">هذه معاينة حية للطريقة التي سيختبر بها طلابك المحتوى المدخل حالياً.</p>
+
+                <div class="student-workspace">
+                    <!-- MAIN EXERCISE PANE -->
+                    <div class="workspace-main">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <h4 style="margin: 0; font-size: 0.9rem;" id="workspace-main-title">بيئة تقييم الطالب</h4>
+                            <span id="stage-indicator" style="font-size: 0.8rem; color: var(--office-muted);">0 / 0</span>
+                        </div>
+
+                        <div class="rule">
+                            🎯 أجب عن الخانات أدناه بدقة. يقيّم النظام الإجابات بناءً على تقارب النصوص.
+                        </div>
+
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" id="progress"></div>
+                        </div>
+
+                        <!-- شاشة البداية -->
+                        <div id="level-menu">
+                            <div style="background: #ffffff; padding: 10px; border: 1px solid var(--office-border); margin-bottom: 12px; font-size: 0.85rem;">
+                                الاختبار جاهز لبدء الجلسة. اضغط الزر أدناه للبدء.
+                            </div>
+                            <button onclick="startQuiz()" class="primary-btn" style="width: 100%;">بدء التقييم الآن</button>
+                        </div>
+
+                        <!-- منطقة الأسئلة -->
+                        <div id="quiz-part" class="hidden">
+                            <div id="question-container"></div>
+                        </div>
+
+                        <!-- شاشة النهاية -->
+                        <div id="success" class="hidden" style="text-align: center; padding: 10px 0;">
+                            <h4 style="color: var(--success); margin-bottom: 8px;">أتممت مراحل التقييم بنجاح تام! 🌟</h4>
+                            <button onclick="resetQuiz()" style="width: 100%;">إعادة الاختبار من البداية</button>
+                        </div>
+                    </div>
+
+                    <!-- SIDEBAR PANE -->
+                    <div class="workspace-sidebar">
+                        <h4 style="margin-top: 0; font-size: 0.85rem; border-bottom: 1px solid var(--office-border); padding-bottom: 6px;">لوحة المراجع والإرشادات</h4>
+                        
+                        <div class="laws-box">
+                            <h5 id="display-laws-title" style="margin: 0 0 4px 0; font-size: 0.8rem; color: var(--warning);">📌 توجيهات هامة للاستذكار:</h5>
+                            <ul class="laws-list" id="display-laws-list"></ul>
+                        </div>
+
+                        <div>
+                            <label style="font-size: 0.75rem; display: block; margin-bottom: 4px;">مفاتيح المساعدة السريعة:</label>
+                            <div class="roots-grid" id="display-helpers-grid"></div>
+                            <div class="display-root-box" id="root-display" style="margin-top: 4px;">
+                                انقر على أي زر أعلاه لعرض التفاصيل...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        let projectTitle = "رياضيات الفصل الأول - المستوى الأول";
+        let questionsData = [
+            { q: "ما هي عاصمة جمهورية العراق؟", answers: ["بغداد"], hint: "تسمى دار السلام وتقع على نهر دجلة." },
+            { q: "في أي سنة انتهت الحرب العالمية الثانية؟", answers: ["1945"], hint: "في منتصف الأربعينيات من القرن العشرين." }
+        ];
+
+        let helpersConfig = {
+            lawsTitle: "📌 توجيهات هامة للاستذكار:",
+            lawsText: "اقرأ السؤال بتمعن قبل الإجابة.\nاستعن بمفاتيح المساعدة الجانبية عند الحاجة.",
+            buttons: [
+                { name: "مساعد التفكير", value: "ركز جيداً على معطيات السؤال لاستخراج الإجابة المطلوبة." }
+            ]
+        };
+
+        let levels = [];
+        let currentLevel = 0;
+
+        function updateProjectTitle(val) {
+            projectTitle = val.trim() || "اختبار تفاعلي";
+            document.getElementById('header-display-title').textContent = `📁 ${projectTitle}`;
+            document.getElementById('summary-title-display').textContent = projectTitle;
+            document.getElementById('preview-subject-header').textContent = `معاينة تجربة الطالب: ${projectTitle}`;
+        }
+
+        function switchTab(tabId, btnElement) {
+            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById(tabId).classList.add('active');
+            btnElement.classList.add('active');
+
+            if (tabId === 'tab-questions' || tabId === 'tab-guidelines') {
+                renderMakerUI();
+            } else if (tabId === 'tab-preview') {
+                updateGameSidebar();
+                initGameEngine();
+            } else if (tabId === 'tab-home') {
+                updateSummaryCounts();
+            }
+        }
+
+        window.onload = function() {
+            renderMakerUI();
+            updateSummaryCounts();
+        };
+
+        function updateSummaryCounts() {
+            document.getElementById('summary-q-count').textContent = questionsData.length;
+            document.getElementById('summary-h-count').textContent = helpersConfig.buttons.length;
+            document.getElementById('q-count-badge').textContent = questionsData.length;
+        }
+
+        function handleFileUpload(event) {
+            let file = event.target.files[0];
+            if (!file) return;
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('import-log-input').value = e.target.result;
+                importExternalLog();
+            };
+            reader.readAsText(file);
+        }
+
+        function loadDefaultTemplate() {
+            document.getElementById('import-log-input').value = 
+                "Q: ما هي عاصمة جمهورية العراق؟\nA: بغداد\nH: تسمى دار السلام\n\n---\n" +
+                "Q: ما هو العنصر الكيميائي للماء؟\nA: هيدروجين وأكسجين, ماء\nH: مركب كيميائي أساسي\n\n---\n" +
+                "Q: في أي عام تأسست الأمم المتحدة؟\nA: 1945\nH: بعد الحرب العالمية الثانية";
+            importExternalLog();
+        }
+
+        function renderMakerUI() {
+            updateSummaryCounts();
+            let qContainer = document.getElementById('questions-list-container');
+            qContainer.innerHTML = '';
+            questionsData.forEach((item, index) => {
+                let card = document.createElement('div');
+                card.className = 'office-card';
+                card.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <strong>سؤال رقم (${index + 1})</strong>
+                        <button class="danger-btn" style="padding: 2px 6px; font-size: 0.75rem; height: 26px;" onclick="removeQuestion(${index})">حذف السؤال</button>
+                    </div>
+                    <div class="input-group">
+                        <label>نص السؤال:</label>
+                        <input type="text" id="q-text-${index}" value="${escapeHtml(item.q)}" oninput="updateQuestionData(${index})">
+                    </div>
+                    <div class="input-group">
+                        <label>الإجابات المقبولة (مفصولة بفاصلة):</label>
+                        <input type="text" id="q-ans-${index}" value="${item.answers.join(', ')}" oninput="updateQuestionData(${index})">
+                    </div>
+                    <div class="input-group">
+                        <label>تلميح للطالب (اختياري):</label>
+                        <input type="text" id="q-hint-${index}" value="${escapeHtml(item.hint || '')}" oninput="updateQuestionData(${index})">
+                    </div>
+                `;
+                qContainer.appendChild(card);
+            });
+
+            let hContainer = document.getElementById('helpers-grid-container');
+            hContainer.innerHTML = '';
+            helpersConfig.buttons.forEach((btn, index) => {
+                let hCard = document.createElement('div');
+                hCard.className = 'office-card';
+                hCard.style.marginBottom = '8px';
+                hCard.innerHTML = `
+                    <div style="display: flex; gap: 4px; margin-bottom: 4px;">
+                        <input type="text" placeholder="اسم الزر" value="${btn.name}" id="h-name-${index}" oninput="updateHelperButton(${index})" style="flex: 1;">
+                        <button class="danger-btn" style="padding: 2px 6px; height: 28px;" onclick="removeHelperButton(${index})">حذف</button>
+                    </div>
+                    <input type="text" placeholder="محتوى التوجيه أو القاعدة" value="${btn.value}" id="h-val-${index}" oninput="updateHelperButton(${index})">
+                `;
+                hContainer.appendChild(hCard);
+            });
+        }
+
+        function addNewQuestionCard() {
+            questionsData.push({ q: "سؤال جديد", answers: ["إجابة"], hint: "تلميح توضيحي" });
+            renderMakerUI();
+        }
+
+        function removeQuestion(index) {
+            questionsData.splice(index, 1);
+            renderMakerUI();
+        }
+
+        function updateQuestionData(index) {
+            let qInput = document.getElementById(`q-text-${index}`);
+            let aInput = document.getElementById(`q-ans-${index}`);
+            let hInput = document.getElementById(`q-hint-${index}`);
+            if (qInput && aInput && hInput) {
+                questionsData[index].q = qInput.value;
+                questionsData[index].answers = aInput.value.split(',').map(s => s.trim());
+                questionsData[index].hint = hInput.value;
+            }
+        }
+
+        function addHelperButton() {
+            helpersConfig.buttons.push({ name: "زر جديد", value: "محتوى توجيهي" });
+            renderMakerUI();
+        }
+
+        function removeHelperButton(index) {
+            helpersConfig.buttons.splice(index, 1);
+            renderMakerUI();
+        }
+
+        function updateHelperButton(index) {
+            let nameInp = document.getElementById(`h-name-${index}`);
+            let valInp = document.getElementById(`h-val-${index}`);
+            if (nameInp && valInp) {
+                helpersConfig.buttons[index].name = nameInp.value;
+                helpersConfig.buttons[index].value = valInp.value;
+            }
+        }
+
+        function updateHelpersConfig() {
+            helpersConfig.lawsTitle = document.getElementById('laws-title-input').value;
+            helpersConfig.lawsText = document.getElementById('laws-content-input').value;
+        }
+
+        function importExternalLog() {
+            let rawText = document.getElementById('import-log-input').value.trim();
+            if (!rawText) return;
+
+            let blocks = rawText.split('---');
+            let newQuestions = [];
+
+            for (let block of blocks) {
+                let lines = block.trim().split('\n');
+                let qText = "", aAnswers = [], hHint = "";
+                for (let line of lines) {
+                    if (line.startsWith('Q:')) qText = line.replace('Q:', '').trim();
+                    else if (line.startsWith('A:')) aAnswers = line.replace('A:', '').split(',').map(item => item.trim());
+                    else if (line.startsWith('H:')) hHint = line.replace('H:', '').trim();
+                }
+                if (qText) {
+                    newQuestions.push({ q: qText, answers: aAnswers.length > 0 ? aAnswers : ["إجابة"], hint: hHint });
+                }
+            }
+
+            if (newQuestions.length > 0) {
+                questionsData = newQuestions;
+                renderMakerUI();
+                alert(`تم استيراد ${newQuestions.length} سؤالاً بنجاح وتم توزيعها في تبويب بنك الأسئلة!`);
+            }
+        }
+
+        function escapeHtml(text) {
+            return text.replace(/"/g, '&quot;');
+        }
+
+        function updateGameSidebar() {
+            document.getElementById('display-laws-title').textContent = helpersConfig.lawsTitle;
+            let lawsListEl = document.getElementById('display-laws-list');
+            lawsListEl.innerHTML = '';
+            helpersConfig.lawsText.split('\n').forEach(line => {
+                if(line.trim()) {
+                    let li = document.createElement('li');
+                    li.textContent = line.trim();
+                    lawsListEl.appendChild(li);
+                }
+            });
+
+            let gridEl = document.getElementById('display-helpers-grid');
+            gridEl.innerHTML = '';
+            helpersConfig.buttons.forEach(btn => {
+                let button = document.createElement('button');
+                button.className = 'root-btn';
+                button.textContent = btn.name;
+                button.onclick = () => showRule(btn.name, btn.value);
+                gridEl.appendChild(button);
+            });
+        }
+
+        function calculateSimilarity(str1, str2) {
+            let longer = str1, shorter = str2;
+            if (str1.length < str2.length) { longer = str2; shorter = str1; }
+            let longerLength = longer.length;
+            if (longerLength === 0) return 1.0;
+            return (longerLength - editDistance(longer, shorter)) / parseFloat(longerLength);
+        }
+
+        function editDistance(s1, s2) {
+            s1 = s1.toLowerCase(); s2 = s2.toLowerCase();
+            let costs = new Array();
+            for (let i = 0; i <= s1.length; i++) {
+                let lastValue = i;
+                for (let j = 0; j <= s2.length; j++) {
+                    if (i == 0) costs[j] = j;
+                    else {
+                        if (j > 0) {
+                            let newValue = costs[j - 1];
+                            if (s1.charAt(i - 1) != s2.charAt(j - 1))
+                                newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
+                            costs[j - 1] = lastValue;
+                            lastValue = newValue;
+                        }
+                    }
+                }
+                if (i > 0) costs[s2.length] = lastValue;
+            }
+            return costs[s2.length];
+        }
+
+        // --- EXPORT TEACHER PACKAGE ---
+        function exportPackage() {
+            updateGameSidebar();
+            let clone = document.documentElement.cloneNode(true);
+            
+            let appWindow = clone.querySelector('.app-window');
+            let titleBar = clone.querySelector('.title-bar');
+            let ribbonTabs = clone.querySelector('.ribbon-tabs');
+            if (titleBar) titleBar.remove();
+            if (ribbonTabs) ribbonTabs.remove();
+
+            let previewPane = clone.querySelector('#tab-preview');
+            if (previewPane) {
+                previewPane.classList.add('active');
+                previewPane.style.display = 'block';
+                previewPane.style.padding = '10px';
+            }
+
+            ['tab-home', 'tab-questions', 'tab-guidelines'].forEach(id => {
+                let p = clone.querySelector('#' + id);
+                if (p) p.remove();
+            });
+
+            let scriptInjection = clone.querySelector('script');
+            if (scriptInjection) {
+                scriptInjection.textContent = `
+                    let projectTitle = ${JSON.stringify(projectTitle)};
+                    let questionsData = ${JSON.stringify(questionsData)};
+                    let helpersConfig = ${JSON.stringify(helpersConfig)};
+                    let levels = [];
+                    let currentLevel = 0;
+
+                    window.onload = function() {
+                        document.title = projectTitle;
+                        updateGameSidebar();
+                        initGameEngine();
+                    };
+
+                    function updateGameSidebar() {
+                        document.getElementById('display-laws-title').textContent = helpersConfig.lawsTitle;
+                        let lawsListEl = document.getElementById('display-laws-list');
+                        lawsListEl.innerHTML = '';
+                        helpersConfig.lawsText.split('\\n').forEach(line => {
+                            if(line.trim()) {
+                                let li = document.createElement('li');
+                                li.textContent = line.trim();
+                                lawsListEl.appendChild(li);
+                            }
+                        });
+
+                        let gridEl = document.getElementById('display-helpers-grid');
+                        gridEl.innerHTML = '';
+                        helpersConfig.buttons.forEach(btn => {
+                            let button = document.createElement('button');
+                            button.className = 'root-btn';
+                            button.textContent = btn.name;
+                            button.onclick = () => showRule(btn.name, btn.value);
+                            gridEl.appendChild(button);
+                        });
+                    }
+
+                    function initGameEngine() {
+                        let logText = "";
+                        questionsData.forEach((item) => {
+                            logText += \`Q: \${item.q}\\nA: \${item.answers.join(', ')}\\nH: \${item.hint || ''}\\n\\n---\n\`;
+                        });
+                        levels = parseLogData(logText);
+                        currentLevel = 0;
+                        resetQuizUI();
+                    }
+
+                    function parseLogData(logText) {
+                        let blocks = logText.split('---');
+                        let parsedLevels = [];
+                        for (let block of blocks) {
+                            let lines = block.trim().split('\\n');
+                            let qText = "", aAnswers = [], hHint = "";
+                            for (let line of lines) {
+                                if (line.startsWith('Q:')) qText = line.replace('Q:', '').trim();
+                                else if (line.startsWith('A:')) aAnswers = line.replace('A:', '').split(',').map(item => item.trim().toLowerCase());
+                                else if (line.startsWith('H:')) hHint = line.replace('H:', '').trim();
+                            }
+                            if (qText && aAnswers.length > 0) parsedLevels.push({ q: qText, answers: aAnswers, hint: hHint });
+                        }
+                        return parsedLevels;
+                    }
+
+                    function resetQuizUI() {
+                        document.getElementById('level-menu').classList.remove('hidden');
+                        document.getElementById('quiz-part').classList.add('hidden');
+                        document.getElementById('success').classList.add('hidden');
+                        document.getElementById('stage-indicator').textContent = levels.length > 0 ? \`1 / \${levels.length}\` : "0 / 0";
+                        document.getElementById('progress').style.width = "0%";
+                    }
+
+                    function startQuiz() {
+                        if (levels.length === 0) return;
+                        document.getElementById('level-menu').classList.add('hidden');
+                        document.getElementById('quiz-part').classList.remove('hidden');
+                        renderQuestion();
+                    }
+
+                    function resetQuiz() { currentLevel = 0; resetQuizUI(); startQuiz(); }
+
+                    function renderQuestion() {
+                        if (currentLevel >= levels.length) {
+                            document.getElementById('quiz-part').classList.add('hidden');
+                            document.getElementById('success').classList.remove('hidden');
+                            document.getElementById('stage-indicator').textContent = "مكتمل!";
+                            document.getElementById('progress').style.width = "100%";
+                            return;
+                        }
+
+                        let lvl = levels[currentLevel];
+                        let container = document.getElementById('question-container');
+                        let hintHtml = lvl.hint ? \`
+                            <div style="margin-bottom: 8px;">
+                                <button onclick="toggleHint()" style="width: 100%;">💡 إظهار/إخفاء التلميح</button>
+                                <div id="hint-box" class="hidden" style="background: #ffffff; border: 1px solid #c8c6c4; padding: 6px; margin-top: 4px; font-size: 0.8rem;">\${lvl.hint}</div>
+                            </div>
+                        \` : '';
+                        
+                        container.innerHTML = \`
+                            <p style="font-size: 0.9rem; font-weight: 600; margin-bottom: 10px; line-height: 1.4;">سؤال \${currentLevel + 1}: \${lvl.q}</p>
+                            \${hintHtml}
+                            <div class="game-row">
+                                <input type="text" id="user-input" placeholder="اكتب الإجابة هنا..." autofocus style="flex: 1;">
+                                <button class="primary-btn" onclick="checkAnswer()">تحقق</button>
+                            </div>
+                            <div id="stage-fb" class="feedback"></div>
+                        \`;
+
+                        document.getElementById('stage-indicator').textContent = \`\${currentLevel + 1} / \${levels.length}\`;
+                        document.getElementById('progress').style.width = \`\${(currentLevel / levels.length) * 100}%\`;
+                        setTimeout(() => { let inp = document.getElementById('user-input'); if(inp) inp.focus(); }, 50);
+                    }
+
+                    function toggleHint() { document.getElementById('hint-box').classList.toggle('hidden'); }
+                    function showRule(name, val) { document.getElementById('root-display').innerHTML = \`<strong>\${name}:</strong> \${val}\`; }
+                    
+                    function calculateSimilarity(str1, str2) {
+                        let longer = str1, shorter = str2;
+                        if (str1.length < str2.length) { longer = str2; shorter = str1; }
+                        let longerLength = longer.length;
+                        if (longerLength === 0) return 1.0;
+                        return (longerLength - editDistance(longer, shorter)) / parseFloat(longerLength);
+                    }
+                    function editDistance(s1, s2) {
+                        s1 = s1.toLowerCase(); s2 = s2.toLowerCase();
+                        let costs = new Array();
+                        for (let i = 0; i <= s1.length; i++) {
+                            let lastValue = i;
+                            for (let j = 0; j <= s2.length; j++) {
+                                if (i == 0) costs[j] = j;
+                                else {
+                                    if (j > 0) {
+                                        let newValue = costs[j - 1];
+                                        if (s1.charAt(i - 1) != s2.charAt(j - 1)) newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
+                                        costs[j - 1] = lastValue; lastValue = newValue;
+                                    }
+                                }
+                            }
+                            if (i > 0) costs[s2.length] = lastValue;
+                        }
+                        return costs[s2.length];
+                    }
+
+                    function checkAnswer() {
+                        let inputField = document.getElementById('user-input');
+                        let feedback = document.getElementById('stage-fb');
+                        let userVal = inputField.value.trim().toLowerCase();
+                        let validAnswers = levels[currentLevel].answers;
+
+                        let maxScore = 0;
+                        for (let ans of validAnswers) {
+                            let score = calculateSimilarity(userVal, ans) * 100;
+                            if (score > maxScore) maxScore = score;
+                        }
+                        let percentage = Math.round(maxScore);
+
+                        if (percentage >= 85) {
+                            feedback.textContent = \`إجابة صحيحة (\${percentage}%) ✓\`;
+                            feedback.className = "feedback correct";
+                            inputField.disabled = true;
+                            setTimeout(() => { currentLevel++; renderQuestion(); }, 1000);
+                        } else if (percentage >= 40) {
+                            feedback.textContent = \`إجابة قريبة جداً (\${percentage}%)\`;
+                            feedback.className = "feedback partial";
+                        } else {
+                            feedback.textContent = \`إجابة غير دقيقة (\${percentage}%)\`;
+                            feedback.className = "feedback incorrect";
+                        }
+                    }
+                `;
+            }
+
+            let htmlContent = '<!DOCTYPE html>\n' + clone.outerHTML;
+            let htmlBlob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+            let htmlA = document.createElement('a');
+            htmlA.href = URL.createObjectURL(htmlBlob);
+            
+            // Clean file name for download based on user input
+            let safeFilename = projectTitle.replace(/[\\/:*?"<>|]/g, '_') + '.html';
+            htmlA.download = safeFilename;
+            htmlA.click();
+        }
+
+        // --- PREVIEW ENGINE INSIDE TEACHER PANEL ---
+        function initGameEngine() {
+            let logText = "";
+            questionsData.forEach((item) => {
+                logText += `Q: ${item.q}\nA: ${item.answers.join(', ')}\nH: ${item.hint || ''}\n\n---\n`;
+            });
+            levels = parseLogData(logText);
+            currentLevel = 0;
+            resetQuizUI();
+        }
+
+        function parseLogData(logText) {
+            let blocks = logText.split('---');
+            let parsedLevels = [];
+            for (let block of blocks) {
+                let lines = block.trim().split('\n');
+                let qText = "", aAnswers = [], hHint = "";
+                for (let line of lines) {
+                    if (line.startsWith('Q:')) qText = line.replace('Q:', '').trim();
+                    else if (line.startsWith('A:')) aAnswers = line.replace('A:', '').split(',').map(item => item.trim().toLowerCase());
+                    else if (line.startsWith('H:')) hHint = line.replace('H:', '').trim();
+                }
+                if (qText && aAnswers.length > 0) parsedLevels.push({ q: qText, answers: aAnswers, hint: hHint });
+            }
+            return parsedLevels;
+        }
+
+        function resetQuizUI() {
+            document.getElementById('level-menu').classList.remove('hidden');
+            document.getElementById('quiz-part').classList.add('hidden');
+            document.getElementById('success').classList.add('hidden');
+            document.getElementById('stage-indicator').textContent = levels.length > 0 ? `1 / ${levels.length}` : "0 / 0";
+            document.getElementById('progress').style.width = "0%";
+        }
+
+        function startQuiz() {
+            if (levels.length === 0) { alert("أضف سؤالاً واحداً على الأقل!"); return; }
+            document.getElementById('level-menu').classList.add('hidden');
+            document.getElementById('quiz-part').classList.remove('hidden');
+            renderQuestion();
+        }
+
+        function resetQuiz() { currentLevel = 0; resetQuizUI(); startQuiz(); }
+
+        function renderQuestion() {
+            if (currentLevel >= levels.length) {
+                document.getElementById('quiz-part').classList.add('hidden');
+                document.getElementById('success').classList.remove('hidden');
+                document.getElementById('stage-indicator').textContent = "مكتمل!";
+                document.getElementById('progress').style.width = "100%";
+                return;
+            }
+
+            let lvl = levels[currentLevel];
+            let container = document.getElementById('question-container');
+            let hintHtml = lvl.hint ? `
+                <div style="margin-bottom: 8px;">
+                    <button onclick="toggleHint()" style="width: 100%;">💡 إظهار/إخفاء التلميح</button>
+                    <div id="hint-box" class="hidden" style="background: #ffffff; border: 1px solid #c8c6c4; padding: 6px; margin-top: 4px; font-size: 0.8rem;">${lvl.hint}</div>
+                </div>
+            ` : '';
+
+            container.innerHTML = `
+                <p style="font-size: 0.9rem; font-weight: 600; margin-bottom: 10px; line-height: 1.4;">سؤال ${currentLevel + 1}: ${lvl.q}</p>
+                ${hintHtml}
+                <div class="game-row">
+                    <input type="text" id="user-input" placeholder="اكتب الإجابة هنا..." autofocus style="flex: 1;">
+                    <button class="primary-btn" onclick="checkAnswer()">تحقق</button>
+                </div>
+                <div id="stage-fb" class="feedback"></div>
+            `;
+
+            document.getElementById('stage-indicator').textContent = `${currentLevel + 1} / ${levels.length}`;
+            document.getElementById('progress').style.width = `${(currentLevel / levels.length) * 100}%`;
+            setTimeout(() => { let inp = document.getElementById('user-input'); if(inp) inp.focus(); }, 50);
+        }
+
+        function toggleHint() { document.getElementById('hint-box').classList.toggle('hidden'); }
+        function showRule(name, val) { document.getElementById('root-display').innerHTML = `<strong>${name}:</strong> ${val}`; }
+
+        function checkAnswer() {
+            let inputField = document.getElementById('user-input');
+            let feedback = document.getElementById('stage-fb');
+            let userVal = inputField.value.trim().toLowerCase();
+            let validAnswers = levels[currentLevel].answers;
+
+            let maxScore = 0;
+            for (let ans of validAnswers) {
+                let score = calculateSimilarity(userVal, ans) * 100;
+                if (score > maxScore) maxScore = score;
+            }
+            let percentage = Math.round(maxScore);
+
+            if (percentage >= 85) {
+                feedback.textContent = `إجابة صحيحة (${percentage}%) ✓`;
+                feedback.className = "feedback correct";
+                inputField.disabled = true;
+                setTimeout(() => { currentLevel++; renderQuestion(); }, 1000);
+            } else if (percentage >= 40) {
+                feedback.textContent = `إجابة قريبة جداً (${percentage}%)`;
+                feedback.className = "feedback partial";
+            } else {
+                feedback.textContent = `إجابة غير دقيقة (${percentage}%)`;
+                feedback.className = "feedback incorrect";
+            }
+        }
+    </script>
+</body>
+</html>
