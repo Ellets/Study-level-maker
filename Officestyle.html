@@ -365,7 +365,7 @@
                     </div>
                     <div class="input-group" style="margin-top: 10px;">
                         <label>أو لصق بنك الأسئلة النصي هنا:</label>
-                        <textarea id="import-log-input" rows="4" placeholder="Q: اكتب السؤال هنا...&#10;A: الإجابة المقبولة&#10;H: تلميح للطالب&#10;---" style="font-family: monospace;"></textarea>
+                        <textarea id="import-log-input" rows="4" placeholder="Q: اكتب السؤال هنا (مثل: i^(25))...&#10;A: الإجابة المقبولة&#10;H: تلميح للطالب&#10;---" style="font-family: monospace;"></textarea>
                         <button onclick="importExternalLog()" class="primary-btn" style="margin-top: 6px;">تحليل وتوزيع النصوص على التبويبات</button>
                     </div>
                 </div>
@@ -386,7 +386,7 @@
                     <h3 style="margin: 0; border: none;">إدارة بنك الأسئلة والتقييم الآلي</h3>
                     <button onclick="addNewQuestionCard()" class="primary-btn">+ إضافة صف سؤال جديد</button>
                 </div>
-                <p style="color: var(--office-muted); font-size: 0.85rem; margin-bottom: 16px;">كل سؤال يحتوي على نص السؤال، الإجابات الصحيحة المقبولة (فصل عدة إجابات بفاصلة)، وتلميح مساعد.</p>
+                <p style="color: var(--office-muted); font-size: 0.85rem; margin-bottom: 16px;">كل سؤال يحتوي على نص السؤال، الإجابات الصحيحة المقبولة، وتلميح مساعد.</p>
 
                 <div id="questions-list-container"></div>
             </div>
@@ -484,15 +484,15 @@
     <script>
         let projectTitle = "رياضيات الفصل الأول - المستوى الأول";
         let questionsData = [
-            { q: "ما هي عاصمة جمهورية العراق؟", answers: ["بغداد"], hint: "تسمى دار السلام وتقع على نهر دجلة." },
-            { q: "في أي سنة انتهت الحرب العالمية الثانية؟", answers: ["1945"], hint: "في منتصف الأربعينيات من القرن العشرين." }
+            { q: "بسط المقدار i^(25)", answers: ["i", "تخيلى", "تخيله"], hint: "تذكر دورة قوى العدد i (تقسيم الأس على 4)." },
+            { q: "ما هي عاصمة جمهورية العراق؟", answers: ["بغداد"], hint: "تسمى دار السلام وتقع على نهر دجلة." }
         ];
 
         let helpersConfig = {
             lawsTitle: "📌 توجيهات هامة للاستذكار:",
             lawsText: "اقرأ السؤال بتمعن قبل الإجابة.\nاستعن بمفاتيح المساعدة الجانبية عند الحاجة.",
             buttons: [
-                { name: "مساعد التفكير", value: "ركز جيداً على معطيات السؤال لاستخراج الإجابة المطلوبة." }
+                { name: "قوانين الأسس", value: "عند ضرب الحسابات تجمع الأسس، وفي القسمة تطرح." }
             ]
         };
 
@@ -547,9 +547,8 @@
 
         function loadDefaultTemplate() {
             document.getElementById('import-log-input').value = 
-                "Q: ما هي عاصمة جمهورية العراق؟\nA: بغداد\nH: تسمى دار السلام\n\n---\n" +
-                "Q: ما هو العنصر الكيميائي للماء؟\nA: هيدروجين وأكسجين, ماء\nH: مركب كيميائي أساسي\n\n---\n" +
-                "Q: في أي عام تأسست الأمم المتحدة؟\nA: 1945\nH: بعد الحرب العالمية الثانية";
+                "Q: بسط المقدار i^(25)\nA: i\nH: تذكر دورة قوى العدد i\n\n---\n" +
+                "Q: ما هي عاصمة جمهورية العراق؟\nA: بغداد\nH: تسمى دار السلام";
             importExternalLog();
         }
 
@@ -571,7 +570,7 @@
                     </div>
                     <div class="input-group">
                         <label>الإجابات المقبولة (مفصولة بفاصلة):</label>
-                        <input type="text" id="q-ans-${index}" value="${item.answers.join(', ')}" oninput="updateQuestionData(${index})">
+                        <input type="text" id="q-ans-${index}" value="${escapeHtml(item.answers.join(', '))}" oninput="updateQuestionData(${index})">
                     </div>
                     <div class="input-group">
                         <label>تلميح للطالب (اختياري):</label>
@@ -589,10 +588,10 @@
                 hCard.style.marginBottom = '8px';
                 hCard.innerHTML = `
                     <div style="display: flex; gap: 4px; margin-bottom: 4px;">
-                        <input type="text" placeholder="اسم الزر" value="${btn.name}" id="h-name-${index}" oninput="updateHelperButton(${index})" style="flex: 1;">
+                        <input type="text" placeholder="اسم الزر" value="${escapeHtml(btn.name)}" id="h-name-${index}" oninput="updateHelperButton(${index})" style="flex: 1;">
                         <button class="danger-btn" style="padding: 2px 6px; height: 28px;" onclick="removeHelperButton(${index})">حذف</button>
                     </div>
-                    <input type="text" placeholder="محتوى التوجيه أو القاعدة" value="${btn.value}" id="h-val-${index}" oninput="updateHelperButton(${index})">
+                    <input type="text" placeholder="محتوى التوجيه أو القاعدة" value="${escapeHtml(btn.value)}" id="h-val-${index}" oninput="updateHelperButton(${index})">
                 `;
                 hContainer.appendChild(hCard);
             });
@@ -671,7 +670,13 @@
         }
 
         function escapeHtml(text) {
-            return text.replace(/"/g, '&quot;');
+            if (!text) return '';
+            return String(text)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
         }
 
         function updateGameSidebar() {
@@ -727,7 +732,7 @@
             return costs[s2.length];
         }
 
-        // --- EXPORT TEACHER PACKAGE ---
+        // --- EXPORT TEACHER PACKAGE (SAFE JSON EMBEDDING) ---
         function exportPackage() {
             updateGameSidebar();
             let clone = document.documentElement.cloneNode(true);
@@ -750,12 +755,31 @@
                 if (p) p.remove();
             });
 
-            let scriptInjection = clone.querySelector('script');
+            // Embed payload safely via JSON script element
+            let payloadObj = { projectTitle, questionsData, helpersConfig };
+            let existingPayload = clone.querySelector('#embedded-quiz-data');
+            if (existingPayload) existingPayload.remove();
+
+            let payloadScript = document.createElement('script');
+            payloadScript.type = 'application/json';
+            payloadScript.id = 'embedded-quiz-data';
+            payloadScript.textContent = JSON.stringify(payloadObj);
+            clone.body.appendChild(payloadScript);
+
+            let scriptInjection = clone.querySelector('script:not([type])');
             if (scriptInjection) {
                 scriptInjection.textContent = `
-                    let projectTitle = ${JSON.stringify(projectTitle)};
-                    let questionsData = ${JSON.stringify(questionsData)};
-                    let helpersConfig = ${JSON.stringify(helpersConfig)};
+                    let payloadNode = document.getElementById('embedded-quiz-data');
+                    let appData = payloadNode ? JSON.parse(payloadNode.textContent) : {
+                        projectTitle: ${JSON.stringify(projectTitle)},
+                        questionsData: ${JSON.stringify(questionsData)},
+                        helpersConfig: ${JSON.stringify(helpersConfig)}
+                    };
+
+                    let projectTitle = appData.projectTitle;
+                    let questionsData = appData.questionsData;
+                    let helpersConfig = appData.helpersConfig;
+
                     let levels = [];
                     let currentLevel = 0;
 
@@ -928,7 +952,6 @@
             let htmlA = document.createElement('a');
             htmlA.href = URL.createObjectURL(htmlBlob);
             
-            // Clean file name for download based on user input
             let safeFilename = projectTitle.replace(/[\\/:*?"<>|]/g, '_') + '.html';
             htmlA.download = safeFilename;
             htmlA.click();
