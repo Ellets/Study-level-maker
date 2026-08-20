@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="page-title-tag">Smart Teacher Platform - Microsoft Office Workspace</title>
+    <!-- KaTeX CSS for Mathematical Rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <!-- KaTeX JS -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderAllMath();"></script>
+
+    <style>
+        :root {
+            --office-bg: #f3f2f1;
+            --office-white: #ffffff;
+            --office-border: #c8c6c4;
+            --office-dark: #323130;
+            --office-muted: #605e5c;
+            --office-blue: #0078d4;
+            --office-blue-hover: #106ebe;
+            --office-tab-hover: #edebe9;
+            --success: #107c41;
+            --danger: #a80000;
+            --warning: #d83b01;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--office-bg);
+            color: var(--office-dark);
+            font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+            margin: 0;
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* --- OFFICE SUITE APP FRAME --- */
+        .app-window {
+            width: 100%;
+            max-width: 1050px;
+            background: var(--office-white);
+            border: 1px solid var(--office-border);
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+        }
+
+        /* --- TITLE BAR --- */
+        .title-bar {
+            background: #fbfbfa;
+            border-bottom: 1px solid var(--office-border);
+            padding: 8px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .title-bar h1 {
+            font-size: 0.9rem;
+            margin: 0;
+            font-weight: 600;
+            color: var(--office-dark);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* --- RIBBON TAB BAR --- */
+        .ribbon-tabs {
+            display: flex;
+            background: #f3f2f1;
+            border-bottom: 1px solid var(--office-border);
+            padding: 0 8px;
+            gap: 2px;
+        }
+
+        .tab-btn {
+            background: transparent;
+            border: none;
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--office-muted);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.1s;
+        }
+
+        .tab-btn:hover {
+            background: var(--office-tab-hover);
+            color: var(--office-dark);
+        }
+
+        .tab-btn.active {
+            background: var(--office-white);
+            color: var(--office-blue);
+            border-bottom-color: var(--office-blue);
+            border-top: 1px solid var(--office-border);
+            border-left: 1px solid var(--office-border);
+            border-right: 1px solid var(--office-border);
+        }
+
+        /* --- RIBBON CONTENT PANES --- */
+        .ribbon-content-area {
+            padding: 20px;
+            min-height: 480px;
+            background: var(--office-white);
+        }
+
+        .tab-pane {
+            display: none;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .tab-pane.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        h3 {
+            color: var(--office-blue);
+            margin-top: 0;
+            font-size: 1rem;
+            border-bottom: 1px solid var(--office-border);
+            padding-bottom: 6px;
+            font-weight: 600;
+        }
+
+        /* --- FORM CONTROLS & ELEMENTS --- */
+        .office-card {
+            background: #faf9f8;
+            border: 1px solid var(--office-border);
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            margin-bottom: 10px;
+        }
+
+        label {
+            font-size: 0.8rem;
+            color: var(--office-muted);
+            font-weight: 600;
+        }
+
+        input[type="text"], textarea {
+            background: #ffffff;
+            border: 1px solid var(--office-border);
+            border-radius: 0px;
+            padding: 6px 10px;
+            color: var(--office-dark);
+            font-size: 0.85rem;
+            font-family: inherit;
+            width: 100%;
+        }
+
+        input[type="text"]:focus, textarea:focus {
+            outline: none;
+            border-color: var(--office-blue);
+            box-shadow: 0 0 0 1px var(--office-blue);
+        }
+
+        button {
+            background: #f3f2f1;
+            color: var(--office-dark);
+            border: 1px solid var(--office-border);
+            border-radius: 0px;
+            padding: 6px 14px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            min-height: 32px;
+            font-family: inherit;
+        }
+
+        button:hover { background: var(--office-tab-hover); border-color: #8a8886; }
+        button:active { background: #c7e0f4; }
+
+        button.primary-btn { background: var(--office-blue); color: white; border-color: #005a9e; }
+        button.primary-btn:hover { background: var(--office-blue-hover); }
+
+        button.success-btn { background: var(--success); color: white; border-color: #0b5329; }
+        button.success-btn:hover { background: #0b6a38; }
+
+        button.danger-btn { background: #fdf3f2; color: var(--danger); border-color: #f1707b; }
+        button.danger-btn:hover { background: #fde7e9; }
+
+        button.warning-btn { background: #fff4ce; color: #323130; border-color: #ffaa44; }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        /* --- STUDENT PREVIEW / GAME PANEL LAYOUT --- */
+        .student-workspace {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .workspace-main, .workspace-sidebar {
+            background: #faf9f8;
+            border: 1px solid var(--office-border);
+            padding: 16px;
+        }
+
+        .laws-box {
+            background: #ffffff;
+            border: 1px solid var(--office-border);
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .laws-box h4 {
+            color: var(--warning);
+            margin: 0 0 4px 0;
+            font-size: 0.85rem;
+            border-bottom: 1px solid var(--office-border);
+            padding-bottom: 4px;
+        }
+
+        .laws-list {
+            margin: 0;
+            padding-left: 16px;
+            font-size: 0.8rem;
+            color: var(--office-muted);
+            line-height: 1.4;
+            text-align: left;
+        }
+
+        .roots-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 4px;
+            margin-bottom: 6px;
+        }
+
+        .root-btn {
+            background: #ffffff;
+            border: 1px solid var(--office-border);
+            color: var(--office-dark);
+            padding: 6px;
+            font-size: 0.8rem;
+            text-align: center;
+            cursor: pointer;
+        }
+        .root-btn:hover { border-color: var(--office-blue); background: var(--office-tab-hover); }
+
+        .display-root-box {
+            background: #eff6fc;
+            border: 1px solid #c7e0f4;
+            padding: 8px;
+            text-align: left;
+            color: #003366;
+            font-size: 0.8rem;
+            min-height: 32px;
+        }
+
+        .progress-bar-container {
+            background: #ffffff;
+            height: 6px;
+            margin-bottom: 12px;
+            overflow: hidden;
+            border: 1px solid var(--office-border);
+        }
+
+        .progress-bar {
+            background: var(--office-blue);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .rule {
+            background: #eff6fc;
+            padding: 8px 12px;
+            border-left: 3px solid var(--office-blue);
+            color: #003366;
+            font-size: 0.8rem;
+            margin-bottom: 12px;
+        }
+
+        .game-row {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .feedback {
+            font-weight: 600;
+            margin-top: 4px;
+            font-size: 0.85rem;
+        }
+        .correct { color: var(--success); }
+        .partial { color: var(--warning); }
+        .incorrect { color: var(--danger); }
+        .hidden { display: none; }
+
+        @media (min-width: 768px) {
+            .student-workspace { flex-direction: row; }
+            .workspace-main { flex: 1; }
+            .workspace-sidebar { width: 300px; }
+            .game-row { flex-direction: row; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="app-window">
+        <!-- Office Title Bar -->
+        <div class="title-bar">
+            <h1 id="header-display-title">📁 Smart Teacher Platform — Interactive Assessment Management System</h1>
+            <div>
+                <button onclick="exportPackage()" class="success-btn">💾 Export Student Interactive Package (.html)</button>
+            </div>
+        </div>
+
+        <!-- Ribbon Tab Bar -->
+        <div class="ribbon-tabs">
+            <button class="tab-btn active" onclick="switchTab('tab-home', this)">🏠 Home & Import</button>
+            <button class="tab-btn" onclick="switchTab('tab-questions', this)">📝 Question Bank (<span id="q-count-badge">2</span>)</button>
+            <button class="tab-btn" onclick="switchTab('tab-guidelines', this)">📌 Guidelines & Helpers</button>
+            <button class="tab-btn" onclick="switchTab('tab-preview', this)" style="color: var(--office-blue);">🚀 Student Preview</button>
+        </div>
+
+        <!-- Ribbon Content Panes -->
+        <div class="ribbon-content-area">
+
+            <!-- TAB 1: HOME & IMPORT -->
+            <div id="tab-home" class="tab-pane active">
+                <h3>General Data Management & File Naming</h3>
+                <p style="color: var(--office-muted); font-size: 0.85rem; margin-bottom: 16px;">Set your subject or academic level title, and use the quick import options below.</p>
+
+                <div class="office-card">
+                    <div style="font-weight: 600; font-size: 0.9rem; margin-bottom: 8px;">🏷️ Customize Unit or Chapter Title</div>
+                    <div class="input-group">
+                        <label>File/Unit Name:</label>
+                        <input type="text" id="project-filename-input" value="Term 1 Mathematics - Level 1" oninput="updateProjectTitle(this.value)">
+                    </div>
+                </div>
+
+                <div class="office-card">
+                    <div style="font-weight: 600; font-size: 0.9rem; margin-bottom: 8px;">📥 Quick Import Data (File or Text Paste)</div>
+                    <div class="grid-2">
+                        <div class="input-group">
+                            <label>Upload Ready Text File (.txt / .log):</label>
+                            <input type="file" id="log-file-input" accept=".log,.txt" onchange="handleFileUpload(event)">
+                        </div>
+                        <div class="input-group">
+                            <label>Import Math Template:</label>
+                            <button onclick="loadDefaultTemplate()" class="warning-btn">Load Default Math Template</button>
+                        </div>
+                    </div>
+                    <div class="input-group" style="margin-top: 10px;">
+                        <label>Or paste your question bank here (use $ for math like $(2-3i)^2$):</label>
+                        <textarea id="import-log-input" rows="4" placeholder="Q: Simplify the expression $(2-3i)^2$&#10;A: -5 - 12i&#10;H: Use the square of binomial formula&#10;---" style="font-family: monospace;"></textarea>
+                        <button onclick="importExternalLog()" class="primary-btn" style="margin-top: 6px;">Parse and Distribute to Tabs</button>
+                    </div>
+                </div>
+
+                <div class="office-card">
+                    <div style="font-weight: 600; font-size: 0.9rem; margin-bottom: 6px;">📊 Current Status Summary</div>
+                    <div style="font-size: 0.85rem; color: var(--office-muted); line-height: 1.6;">
+                        • Current Title: <strong id="summary-title-display">Term 1 Mathematics - Level 1</strong><br>
+                        • Total Questions in System: <strong id="summary-q-count">2</strong> questions.<br>
+                        • Active Helper Keys: <strong id="summary-h-count">1</strong> active keys.<br>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: QUESTION BANK -->
+            <div id="tab-questions" class="tab-pane">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <h3 style="margin: 0; border: none;">Question Bank & Automated Grading Management</h3>
+                    <button onclick="addNewQuestionCard()" class="primary-btn">+ Add New Question Row</button>
+                </div>
+                <p style="color: var(--office-muted); font-size: 0.85rem; margin-bottom: 16px;">Write equations between dollar signs $ (e.g., $(2-3i)^2$ or $\frac{1}{2}$) to render them as proper geometric math symbols.</p>
+
+                <div id="questions-list-container"></div>
+            </div>
+
+            <!-- TAB 3: GUIDELINES & SIDEBAR -->
+            <div id="tab-guidelines" class="tab-pane">
+                <h3>Customize Guidelines & Sidebar Keys</h3>
+                <p style="color: var(--office-muted); font-size: 0.85rem; margin-bottom: 16px;">Control the fixed instructions and references that appear for your students throughout the test.</p>
+
+                <div class="office-card">
+                    <div class="input-group">
+                        <label>Guidance Box Title:</label>
+                        <input type="text" id="laws-title-input" value="📌 Important Study Guidelines:" oninput="updateHelpersConfig()">
+                    </div>
+                    <div class="input-group">
+                        <label>Guideline Points (each line is an individual point):</label>
+                        <textarea id="laws-content-input" rows="3" oninput="updateHelpersConfig()">Read the question carefully before answering.
+Use the side helper keys when needed.</textarea>
+                    </div>
+                </div>
+
+                <div class="office-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <label style="font-size: 0.9rem;">Quick Helper Buttons & Keys:</label>
+                        <button onclick="addHelperButton()" class="primary-btn" style="padding: 2px 10px; font-size: 0.8rem;">+ Add New Button</button>
+                    </div>
+                    <div id="helpers-grid-container"></div>
+                </div>
+            </div>
+
+            <!-- TAB 4: STUDENT PREVIEW -->
+            <div id="tab-preview" class="tab-pane">
+                <h3 style="color: var(--success);" id="preview-subject-header">Student Experience Preview: Term 1 Mathematics - Level 1</h3>
+                <p style="color: var(--office-muted); font-size: 0.85rem; margin-bottom: 16px;">This is a live preview of how your students will experience the content entered currently.</p>
+
+                <div class="student-workspace">
+                    <!-- MAIN EXERCISE PANE -->
+                    <div class="workspace-main">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <h4 style="margin: 0; font-size: 0.9rem;" id="workspace-main-title">Student Assessment Environment</h4>
+                            <span id="stage-indicator" style="font-size: 0.8rem; color: var(--office-muted);">0 / 0</span>
+                        </div>
+
+                        <div class="rule">
+                            🎯 Answer the fields below accurately. The system grades answers based on text proximity.
+                        </div>
+
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" id="progress"></div>
+                        </div>
+
+                        <!-- Start Screen -->
+                        <div id="level-menu">
+                            <div style="background: #ffffff; padding: 10px; border: 1px solid var(--office-border); margin-bottom: 12px; font-size: 0.85rem;">
+                                The assessment is ready to begin. Click the button below to start.
+                            </div>
+                            <button onclick="startQuiz()" class="primary-btn" style="width: 100%;">Start Assessment Now</button>
+                        </div>
+
+                        <!-- Questions Area -->
+                        <div id="quiz-part" class="hidden">
+                            <div id="question-container"></div>
+                        </div>
+
+                        <!-- End Screen -->
+                        <div id="success" class="hidden" style="text-align: center; padding: 10px 0;">
+                            <h4 style="color: var(--success); margin-bottom: 8px;">You have successfully completed all assessment stages! 🌟</h4>
+                            <button onclick="resetQuiz()" style="width: 100%;">Restart Assessment from Beginning</button>
+                        </div>
+                    </div>
+
+                    <!-- SIDEBAR PANE -->
+                    <div class="workspace-sidebar">
+                        <h4 style="margin-top: 0; font-size: 0.85rem; border-bottom: 1px solid var(--office-border); padding-bottom: 6px;">References & Guidelines Panel</h4>
+                        
+                        <div class="laws-box">
+                            <h5 id="display-laws-title" style="margin: 0 0 4px 0; font-size: 0.8rem; color: var(--warning);">📌 Important Study Guidelines:</h5>
+                            <ul class="laws-list" id="display-laws-list"></ul>
+                        </div>
+
+                        <div>
+                            <label style="font-size: 0.75rem; display: block; margin-bottom: 4px;">Quick Helper Keys:</label>
+                            <div class="roots-grid" id="display-helpers-grid"></div>
+                            <div class="display-root-box" id="root-display" style="margin-top: 4px;">
+                                Click any button above to view details...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        let projectTitle = "Term 1 Mathematics - Level 1";
+        let questionsData = [
+            { q: "Simplify the expression $(2 - 3i)^2$", answers: ["-5 - 12i", "-5-12i"], hint: "Use the binomial square formula: $(a-b)^2 = a^2 - 2ab + b^2$ noting that $i^2 = -1$" },
+            { q: "Find the result for the imaginary number $i^{25}$", answers: ["i"], hint: "Divide the exponent 25 by 4 and take the remainder." }
+        ];
+
+        let helpersConfig = {
+            lawsTitle: "📌 Important Study Guidelines:",
+            lawsText: "Read the question carefully before answering.\nUse the side helper keys when needed.",
+            buttons: [
+                { name: "Powers of $i$", value: "$i^1 = i$, $i^2 = -1$, $i^3 = -i$, $i^4 = 1$" }
+            ]
+        };
+
+        let levels = [];
+        let currentLevel = 0;
+
+        function renderAllMath() {
+            if (typeof renderMathInElement === 'function') {
+                renderMathInElement(document.body, {
+                    delimiters: [
+                        {left: "$$", right: "$$", display: true},
+                        {left: "$", right: "$", display: false}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
+
+        function updateProjectTitle(val) {
+            projectTitle = val.trim() || "Interactive Assessment";
+            document.getElementById('header-display-title').textContent = `📁 ${projectTitle}`;
+            document.getElementById('summary-title-display').textContent = projectTitle;
+            document.getElementById('preview-subject-header').textContent = `Student Experience Preview: ${projectTitle}`;
+        }
+
+        function switchTab(tabId, btnElement) {
+            document.querySelectorAll('.tab-pane').forEach(pane => pane.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+
+            document.getElementById(tabId).classList.add('active');
+            btnElement.classList.add('active');
+
+            if (tabId === 'tab-questions' || tabId === 'tab-guidelines') {
+                renderMakerUI();
+            } else if (tabId === 'tab-preview') {
+                updateGameSidebar();
+                initGameEngine();
+            } else if (tabId === 'tab-home') {
+                updateSummaryCounts();
+            }
+        }
+
+        window.onload = function() {
+            renderMakerUI();
+            updateSummaryCounts();
+            setTimeout(renderAllMath, 100);
+        };
+
+        function updateSummaryCounts() {
+            document.getElementById('summary-q-count').textContent = questionsData.length;
+            document.getElementById('summary-h-count').textContent = helpersConfig.buttons.length;
+            document.getElementById('q-count-badge').textContent = questionsData.length;
+        }
+
+        function handleFileUpload(event) {
+            let file = event.target.files[0];
+            if (!file) return;
+            let reader = new FileReader();
+            reader.onload = function(e) {
+                document.getElementById('import-log-input').value = e.target.result;
+                importExternalLog();
+            };
+            reader.readAsText(file);
+        }
+
+        function loadDefaultTemplate() {
+            document.getElementById('import-log-input').value = 
+                "Q: Simplify the expression $(2 - 3i)^2$\nA: -5 - 12i\nH: Use the binomial square formula\n\n---\n" +
+                "Q: Find the result for the imaginary number $i^{25}$\nA: i\nH: Divide the exponent by 4";
+            importExternalLog();
+        }
+
+        function renderMakerUI() {
+            updateSummaryCounts();
+            let qContainer = document.getElementById('questions-list-container');
+            qContainer.innerHTML = '';
+            questionsData.forEach((item, index) => {
+                let card = document.createElement('div');
+                card.className = 'office-card';
+                card.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                        <strong>Question (${index + 1})</strong>
+                        <button class="danger-btn" style="padding: 2px 6px; font-size: 0.75rem; height: 26px;" onclick="removeQuestion(${index})">Delete Question</button>
+                    </div>
+                    <div class="input-group">
+                        <label>Question Text:</label>
+                        <input type="text" id="q-text-${index}" value="${escapeHtml(item.q)}" oninput="updateQuestionData(${index})">
+                    </div>
+                    <div class="input-group">
+                        <label>Accepted Answers (comma separated):</label>
+                        <input type="text" id="q-ans-${index}" value="${escapeHtml(item.answers.join(', '))}" oninput="updateQuestionData(${index})">
+                    </div>
+                    <div class="input-group">
+                        <label>Student Hint (optional):</label>
+                        <input type="text" id="q-hint-${index}" value="${escapeHtml(item.hint || '')}" oninput="updateQuestionData(${index})">
+                    </div>
+                `;
+                qContainer.appendChild(card);
+            });
+
+            let hContainer = document.getElementById('helpers-grid-container');
+            hContainer.innerHTML = '';
+            helpersConfig.buttons.forEach((btn, index) => {
+                let hCard = document.createElement('div');
+                hCard.className = 'office-card';
+                hCard.style.marginBottom = '8px';
+                hCard.innerHTML = `
+                    <div style="display: flex; gap: 4px; margin-bottom: 4px;">
+                        <input type="text" placeholder="Button Name" value="${escapeHtml(btn.name)}" id="h-name-${index}" oninput="updateHelperButton(${index})" style="flex: 1;">
+                        <button class="danger-btn" style="padding: 2px 6px; height: 28px;" onclick="removeHelperButton(${index})">Delete</button>
+                    </div>
+                    <input type="text" placeholder="Guideline or Rule Content" value="${escapeHtml(btn.value)}" id="h-val-${index}" oninput="updateHelperButton(${index})">
+                `;
+                hContainer.appendChild(hCard);
+            });
+            setTimeout(renderAllMath, 50);
+        }
+
+        function addNewQuestionCard() {
+            questionsData.push({ q: "New Question", answers: ["Answer"], hint: "Explanatory hint" });
+            renderMakerUI();
+        }
+
+        function removeQuestion(index) {
+            questionsData.splice(index, 1);
+            renderMakerUI();
+        }
+
+        function updateQuestionData(index) {
+            let qInput = document.getElementById(`q-text-${index}`);
+            let aInput = document.getElementById(`q-ans-${index}`);
+            let hInput = document.getElementById(`q-hint-${index}`);
+            if (qInput && aInput && hInput) {
+                questionsData[index].q = qInput.value;
+                questionsData[index].answers = aInput.value.split(',').map(s => s.trim());
+                questionsData[index].hint = hInput.value;
+            }
+        }
+
+        function addHelperButton() {
+            helpersConfig.buttons.push({ name: "New Rule", value: "Guideline content" });
+            renderMakerUI();
+        }
+
+        function removeHelperButton(index) {
+            helpersConfig.buttons.splice(index, 1);
+            renderMakerUI();
+        }
+
+        function updateHelperButton(index) {
+            let nameInp = document.getElementById(`h-name-${index}`);
+            let valInp = document.getElementById(`h-val-${index}`);
+            if (nameInp && valInp) {
+                helpersConfig.buttons[index].name = nameInp.value;
+                helpersConfig.buttons[index].value = valInp.value;
+            }
+        }
+
+        function updateHelpersConfig() {
+            helpersConfig.lawsTitle = document.getElementById('laws-title-input').value;
+            helpersConfig.lawsText = document.getElementById('laws-content-input').value;
+        }
+
+        function importExternalLog() {
+            let rawText = document.getElementById('import-log-input').value.trim();
+            if (!rawText) return;
+
+            let blocks = rawText.split('---');
+            let newQuestions = [];
+
+            for (let block of blocks) {
+                let lines = block.trim().split('\n');
+                let qText = "", aAnswers = [], hHint = "";
+                for (let line of lines) {
+                    if (line.startsWith('Q:')) qText = line.replace('Q:', '').trim();
+                    else if (line.startsWith('A:')) aAnswers = line.replace('A:', '').split(',').map(item => item.trim());
+                    else if (line.startsWith('H:')) hHint = line.replace('H:', '').trim();
+                }
+                if (qText) {
+                    newQuestions.push({ q: qText, answers: aAnswers.length > 0 ? aAnswers : ["Answer"], hint: hHint });
+                }
+            }
+
+            if (newQuestions.length > 0) {
+                questionsData = newQuestions;
+                renderMakerUI();
+                alert(`Successfully imported ${newQuestions.length} questions!`);
+            }
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return String(text)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function updateGameSidebar() {
+            document.getElementById('display-laws-title').textContent = helpersConfig.lawsTitle;
+            let lawsListEl = document.getElementById('display-laws-list');
+            lawsListEl.innerHTML = '';
+            helpersConfig.lawsText.split('\n').forEach(line => {
+                if(line.trim()) {
+                    let li = document.createElement('li');
+                    li.textContent = line.trim();
+                    lawsListEl.appendChild(li);
+                }
+            });
+
+            let gridEl = document.getElementById('display-helpers-grid');
+            gridEl.innerHTML = '';
+            helpersConfig.buttons.forEach(btn => {
+                let button = document.createElement('button');
+                button.className = 'root-btn';
+                button.innerHTML = btn.name;
+                button.onclick = () => showRule(btn.name, btn.value);
+                gridEl.appendChild(button);
+            });
+            setTimeout(renderAllMath, 50);
+        }
+
+        function showRule(name, value) {
+            let displayBox = document.getElementById('root-display');
+            displayBox.innerHTML = `<strong>${name}:</strong> ${value}`;
+            renderAllMath();
+        }
+
+        function startQuiz() {
+            document.getElementById('level-menu').classList.add('hidden');
+            document.getElementById('quiz-part').classList.remove('hidden');
+            currentLevel = 0;
+            loadQuestion();
+        }
+
+        function resetQuiz() {
+            document.getElementById('success').classList.add('hidden');
+            document.getElementById('level-menu').classList.remove('hidden');
+            document.getElementById('progress').style.width = '0%';
+        }
+
+        function initGameEngine() {
+            currentLevel = 0;
+            document.getElementById('level-menu').classList.remove('hidden');
+            document.getElementById('quiz-part').classList.add('hidden');
+            document.getElementById('success').classList.add('hidden');
+            document.getElementById('progress').style.width = '0%';
+        }
+
+        function loadQuestion() {
+            if (currentLevel >= questionsData.length) {
+                document.getElementById('quiz-part').classList.add('hidden');
+                document.getElementById('success').classList.remove('hidden');
+                document.getElementById('progress').style.width = '100%';
+                document.getElementById('stage-indicator').textContent = `${questionsData.length} / ${questionsData.length}`;
+                return;
+            }
+
+            let q = questionsData[currentLevel];
+            let container = document.getElementById('question-container');
+            
+            let percent = (currentLevel / questionsData.length) * 100;
+            document.getElementById('progress').style.width = percent + '%';
+            document.getElementById('stage-indicator').textContent = `${currentLevel + 1} / ${questionsData.length}`;
+
+            container.innerHTML = `
+                <div style="font-size: 0.9rem; font-weight: 600; margin-bottom: 8px;">Question ${currentLevel + 1}: ${q.q}</div>
+                <div class="game-row">
+                    <input type="text" id="user-answer-input" placeholder="Type your answer here..." style="flex: 1;">
+                    <button onclick="submitAnswer()" class="primary-btn">Submit Answer</button>
+                </div>
+                ${q.hint ? `<div style="font-size: 0.8rem; color: var(--office-muted); margin-bottom: 6px;">💡 Hint: ${q.hint}</div>` : ''}
+                <div id="answer-feedback" class="feedback"></div>
+            `;
+            setTimeout(renderAllMath, 50);
+        }
+
+        function submitAnswer() {
+            let userInp = document.getElementById('user-answer-input').value.trim();
+            let feedbackEl = document.getElementById('answer-feedback');
+            let q = questionsData[currentLevel];
+
+            let isCorrect = false;
+            for (let ans of q.answers) {
+                if (userInp.toLowerCase() === ans.toLowerCase() || calculateSimilarity(userInp, ans) > 0.85) {
+                    isCorrect = true;
+                    break;
+                }
+            }
+
+            if (isCorrect) {
+                feedbackEl.className = "feedback correct";
+                feedbackEl.textContent = "Correct! Great job.";
+                setTimeout(() => {
+                    currentLevel++;
+                    loadQuestion();
+                }, 1200);
+            } else {
+                feedbackEl.className = "feedback incorrect";
+                feedbackEl.textContent = "Incorrect. Try again or check the hints.";
+            }
+            setTimeout(renderAllMath, 50);
+        }
+
+        function calculateSimilarity(str1, str2) {
+            let longer = str1, shorter = str2;
+            if (str1.length < str2.length) { longer = str2; shorter = str1; }
+            let longerLength = longer.length;
+            if (longerLength === 0) return 1.0;
+            return (longerLength - editDistance(longer, shorter)) / parseFloat(longerLength);
+        }
+
+        function editDistance(s1, s2) {
+            s1 = s1.toLowerCase(); s2 = s2.toLowerCase();
+            let costs = new Array();
+            for (let i = 0; i <= s1.length; i++) {
+                let lastValue = i;
+                for (let j = 0; j <= s2.length; j++) {
+                    if (i == 0) costs[j] = j;
+                    else {
+                        if (j > 0) {
+                            let newValue = costs[j - 1];
+                            if (s1.charAt(i - 1) != s2.charAt(j - 1))
+                                newValue = Math.min(Math.min(newValue, lastValue), costs[j]) + 1;
+                            costs[j - 1] = lastValue;
+                            lastValue = newValue;
+                        }
+                    }
+                }
+                if (i > 0) costs[s2.length] = lastValue;
+            }
+            return costs[s2.length];
+        }
+
+        // --- EXPORT TEACHER PACKAGE WITH KATEX SUPPORT ---
+        function exportPackage() {
+            updateGameSidebar();
+            let clone = document.documentElement.cloneNode(true);
+            
+            let appWindow = clone.querySelector('.app-window');
+            let titleBar = clone.querySelector('.title-bar');
+            let ribbonTabs = clone.querySelector('.ribbon-tabs');
+            if (titleBar) titleBar.remove();
+            if (ribbonTabs) ribbonTabs.remove();
+
+            let previewPane = clone.querySelector('#tab-preview');
+            if (previewPane) {
+                previewPane.classList.add('active');
+                previewPane.style.display = 'block';
+            }
+
+            clone.querySelectorAll('.tab-pane').forEach(pane => {
+                if (pane.id !== 'tab-preview') pane.remove();
+            });
+
+            let scriptTag = clone.querySelector('script');
+            if(scriptTag) {
+                scriptTag.innerHTML += "\nwindow.onload = function() { updateGameSidebar(); initGameEngine(); };\n";
+            }
+
+            let blob = new Blob([clone.outerHTML], { type: 'text/html;charset=utf-8' });
+            let link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `${projectTitle.replace(/[^a-zA-Z0-9]/g, '_')}_student_package.html`;
+            link.click();
+        }
+    </script>
+</body>
+</html>
