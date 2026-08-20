@@ -4,6 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="page-title-tag">منصة المعلم الذكية - بيئة عمل مكاتب مايكروسوفت</title>
+    <!-- KaTeX CSS for Mathematical Rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <!-- KaTeX JS -->
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderAllMath();"></script>
+
     <style>
         :root {
             --office-bg: #f3f2f1;
@@ -346,7 +352,7 @@
                 <div class="office-card">
                     <div style="font-weight: 600; font-size: 0.9rem; margin-bottom: 8px;">🏷️ تسمية وتخصيص عنوان الوحدة أو الفصل</div>
                     <div class="input-group">
-                        <label>اسم الملف/الوحدة (مثال: رياضيات الفصل الأول - المستوى الأول):</label>
+                        <label>اسم الملف/الوحدة:</label>
                         <input type="text" id="project-filename-input" value="رياضيات الفصل الأول - المستوى الأول" oninput="updateProjectTitle(this.value)">
                     </div>
                 </div>
@@ -359,13 +365,13 @@
                             <input type="file" id="log-file-input" accept=".log,.txt" onchange="handleFileUpload(event)">
                         </div>
                         <div class="input-group">
-                            <label>استيراد قالب جاهز سريع:</label>
-                            <button onclick="loadDefaultTemplate()" class="warning-btn">تحميل القالب الافتراضي</button>
+                            <label>استيراد قالب رياضيات جاهز:</label>
+                            <button onclick="loadDefaultTemplate()" class="warning-btn">تحميل قالب الرياضيات الافتراضي</button>
                         </div>
                     </div>
                     <div class="input-group" style="margin-top: 10px;">
-                        <label>أو لصق بنك الأسئلة النصي هنا:</label>
-                        <textarea id="import-log-input" rows="4" placeholder="Q: اكتب السؤال هنا (مثل: i^(25))...&#10;A: الإجابة المقبولة&#10;H: تلميح للطالب&#10;---" style="font-family: monospace;"></textarea>
+                        <label>أو لصق بنك الأسئلة النصي هنا (استخدم $ للرموز الرياضية مثل $(2-3i)^2$):</label>
+                        <textarea id="import-log-input" rows="4" placeholder="Q: بسط المقدار $(2-3i)^2$&#10;A: -5 - 12i&#10;H: استخدم قانون مربع الحدين&#10;---" style="font-family: monospace;"></textarea>
                         <button onclick="importExternalLog()" class="primary-btn" style="margin-top: 6px;">تحليل وتوزيع النصوص على التبويبات</button>
                     </div>
                 </div>
@@ -386,7 +392,7 @@
                     <h3 style="margin: 0; border: none;">إدارة بنك الأسئلة والتقييم الآلي</h3>
                     <button onclick="addNewQuestionCard()" class="primary-btn">+ إضافة صف سؤال جديد</button>
                 </div>
-                <p style="color: var(--office-muted); font-size: 0.85rem; margin-bottom: 16px;">كل سؤال يحتوي على نص السؤال، الإجابات الصحيحة المقبولة، وتلميح مساعد.</p>
+                <p style="color: var(--office-muted); font-size: 0.85rem; margin-bottom: 16px;">اكتب المعادلات بين علامتي $ (مثل: $(2-3i)^2$ أو $\frac{1}{2}$) لتظهر بشكل رياضي هندسي صحيح.</p>
 
                 <div id="questions-list-container"></div>
             </div>
@@ -484,20 +490,32 @@
     <script>
         let projectTitle = "رياضيات الفصل الأول - المستوى الأول";
         let questionsData = [
-            { q: "بسط المقدار i^(25)", answers: ["i", "تخيلى", "تخيله"], hint: "تذكر دورة قوى العدد i (تقسيم الأس على 4)." },
-            { q: "ما هي عاصمة جمهورية العراق؟", answers: ["بغداد"], hint: "تسمى دار السلام وتقع على نهر دجلة." }
+            { q: "بسط المقدار $(2 - 3i)^2$", answers: ["-5 - 12i", "-5-12i"], hint: "استخدم قانون مربع الحدين: $(a-b)^2 = a^2 - 2ab + b^2$ مع ملاحظة أن $i^2 = -1$" },
+            { q: "أوجد الناتج للعدد التخيلي $i^{25}$", answers: ["i"], hint: "قسم الأس 25 على 4 وخذ الباقي." }
         ];
 
         let helpersConfig = {
             lawsTitle: "📌 توجيهات هامة للاستذكار:",
             lawsText: "اقرأ السؤال بتمعن قبل الإجابة.\nاستعن بمفاتيح المساعدة الجانبية عند الحاجة.",
             buttons: [
-                { name: "قوانين الأسس", value: "عند ضرب الحسابات تجمع الأسس، وفي القسمة تطرح." }
+                { name: "قوى العدد $i$", value: "$i^1 = i$, $i^2 = -1$, $i^3 = -i$, $i^4 = 1$" }
             ]
         };
 
         let levels = [];
         let currentLevel = 0;
+
+        function renderAllMath() {
+            if (typeof renderMathInElement === 'function') {
+                renderMathInElement(document.body, {
+                    delimiters: [
+                        {left: "$$", right: "$$", display: true},
+                        {left: "$", right: "$", display: false}
+                    ],
+                    throwOnError: false
+                });
+            }
+        }
 
         function updateProjectTitle(val) {
             projectTitle = val.trim() || "اختبار تفاعلي";
@@ -526,6 +544,7 @@
         window.onload = function() {
             renderMakerUI();
             updateSummaryCounts();
+            setTimeout(renderAllMath, 100);
         };
 
         function updateSummaryCounts() {
@@ -547,8 +566,8 @@
 
         function loadDefaultTemplate() {
             document.getElementById('import-log-input').value = 
-                "Q: بسط المقدار i^(25)\nA: i\nH: تذكر دورة قوى العدد i\n\n---\n" +
-                "Q: ما هي عاصمة جمهورية العراق؟\nA: بغداد\nH: تسمى دار السلام";
+                "Q: بسط المقدار $(2 - 3i)^2$\nA: -5 - 12i\nH: استخدم قانون مربع الحدين\n\n---\n" +
+                "Q: أوجد الناتج للعدد التخيلي $i^{25}$\nA: i\nH: قسم الأس على 4";
             importExternalLog();
         }
 
@@ -595,6 +614,7 @@
                 `;
                 hContainer.appendChild(hCard);
             });
+            setTimeout(renderAllMath, 50);
         }
 
         function addNewQuestionCard() {
@@ -619,7 +639,7 @@
         }
 
         function addHelperButton() {
-            helpersConfig.buttons.push({ name: "زر جديد", value: "محتوى توجيهي" });
+            helpersConfig.buttons.push({ name: "قاعدة جديدة", value: "محتوى توجيهي" });
             renderMakerUI();
         }
 
@@ -665,7 +685,7 @@
             if (newQuestions.length > 0) {
                 questionsData = newQuestions;
                 renderMakerUI();
-                alert(`تم استيراد ${newQuestions.length} سؤالاً بنجاح وتم توزيعها في تبويب بنك الأسئلة!`);
+                alert(`تم استيراد ${newQuestions.length} سؤالاً بنجاح!`);
             }
         }
 
@@ -696,10 +716,11 @@
             helpersConfig.buttons.forEach(btn => {
                 let button = document.createElement('button');
                 button.className = 'root-btn';
-                button.textContent = btn.name;
+                button.innerHTML = btn.name;
                 button.onclick = () => showRule(btn.name, btn.value);
                 gridEl.appendChild(button);
             });
+            setTimeout(renderAllMath, 50);
         }
 
         function calculateSimilarity(str1, str2) {
@@ -732,7 +753,7 @@
             return costs[s2.length];
         }
 
-        // --- EXPORT TEACHER PACKAGE (SAFE JSON EMBEDDING) ---
+        // --- EXPORT TEACHER PACKAGE WITH KATEX SUPPORT ---
         function exportPackage() {
             updateGameSidebar();
             let clone = document.documentElement.cloneNode(true);
@@ -755,7 +776,6 @@
                 if (p) p.remove();
             });
 
-            // Embed payload safely via JSON script element
             let payloadObj = { projectTitle, questionsData, helpersConfig };
             let existingPayload = clone.querySelector('#embedded-quiz-data');
             if (existingPayload) existingPayload.remove();
@@ -783,10 +803,23 @@
                     let levels = [];
                     let currentLevel = 0;
 
+                    function renderAllMath() {
+                        if (typeof renderMathInElement === 'function') {
+                            renderMathInElement(document.body, {
+                                delimiters: [
+                                    {left: "$$", right: "$$", display: true},
+                                    {left: "$", right: "$", display: false}
+                                ],
+                                throwOnError: false
+                            });
+                        }
+                    }
+
                     window.onload = function() {
                         document.title = projectTitle;
                         updateGameSidebar();
                         initGameEngine();
+                        setTimeout(renderAllMath, 100);
                     };
 
                     function updateGameSidebar() {
@@ -806,10 +839,11 @@
                         helpersConfig.buttons.forEach(btn => {
                             let button = document.createElement('button');
                             button.className = 'root-btn';
-                            button.textContent = btn.name;
+                            button.innerHTML = btn.name;
                             button.onclick = () => showRule(btn.name, btn.value);
                             gridEl.appendChild(button);
                         });
+                        setTimeout(renderAllMath, 50);
                     }
 
                     function initGameEngine() {
@@ -885,11 +919,21 @@
 
                         document.getElementById('stage-indicator').textContent = \`\${currentLevel + 1} / \${levels.length}\`;
                         document.getElementById('progress').style.width = \`\${(currentLevel / levels.length) * 100}%\`;
-                        setTimeout(() => { let inp = document.getElementById('user-input'); if(inp) inp.focus(); }, 50);
+                        setTimeout(() => { 
+                            let inp = document.getElementById('user-input'); 
+                            if(inp) inp.focus(); 
+                            renderAllMath();
+                        }, 50);
                     }
 
-                    function toggleHint() { document.getElementById('hint-box').classList.toggle('hidden'); }
-                    function showRule(name, val) { document.getElementById('root-display').innerHTML = \`<strong>\${name}:</strong> \${val}\`; }
+                    function toggleHint() { 
+                        document.getElementById('hint-box').classList.toggle('hidden'); 
+                        renderAllMath();
+                    }
+                    function showRule(name, val) { 
+                        document.getElementById('root-display').innerHTML = \`<strong>\${name}:</strong> \${val}\`; 
+                        renderAllMath();
+                    }
                     
                     function calculateSimilarity(str1, str2) {
                         let longer = str1, shorter = str2;
@@ -943,6 +987,7 @@
                             feedback.textContent = \`إجابة غير دقيقة (\${percentage}%)\`;
                             feedback.className = "feedback incorrect";
                         }
+                        renderAllMath();
                     }
                 `;
             }
@@ -990,6 +1035,7 @@
             document.getElementById('success').classList.add('hidden');
             document.getElementById('stage-indicator').textContent = levels.length > 0 ? `1 / ${levels.length}` : "0 / 0";
             document.getElementById('progress').style.width = "0%";
+            setTimeout(renderAllMath, 50);
         }
 
         function startQuiz() {
@@ -1007,6 +1053,7 @@
                 document.getElementById('success').classList.remove('hidden');
                 document.getElementById('stage-indicator').textContent = "مكتمل!";
                 document.getElementById('progress').style.width = "100%";
+                setTimeout(renderAllMath, 50);
                 return;
             }
 
@@ -1031,11 +1078,21 @@
 
             document.getElementById('stage-indicator').textContent = `${currentLevel + 1} / ${levels.length}`;
             document.getElementById('progress').style.width = `${(currentLevel / levels.length) * 100}%`;
-            setTimeout(() => { let inp = document.getElementById('user-input'); if(inp) inp.focus(); }, 50);
+            setTimeout(() => { 
+                let inp = document.getElementById('user-input'); 
+                if(inp) inp.focus(); 
+                renderAllMath();
+            }, 50);
         }
 
-        function toggleHint() { document.getElementById('hint-box').classList.toggle('hidden'); }
-        function showRule(name, val) { document.getElementById('root-display').innerHTML = `<strong>${name}:</strong> ${val}`; }
+        function toggleHint() { 
+            document.getElementById('hint-box').classList.toggle('hidden'); 
+            setTimeout(renderAllMath, 50);
+        }
+        function showRule(name, val) { 
+            document.getElementById('root-display').innerHTML = `<strong>${name}:</strong> ${val}`; 
+            setTimeout(renderAllMath, 50);
+        }
 
         function checkAnswer() {
             let inputField = document.getElementById('user-input');
@@ -1062,6 +1119,7 @@
                 feedback.textContent = `إجابة غير دقيقة (${percentage}%)`;
                 feedback.className = "feedback incorrect";
             }
+            setTimeout(renderAllMath, 50);
         }
     </script>
 </body>
